@@ -1,0 +1,19 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Tennis.ApplicationGUI.DesignButton"
+	x:Name="UserControl"
+	d:DesignWidth="640" d:DesignHeight="480" Width="220" Height="57">
+
+	<Grid x:Name="LayoutRoot">
+		<Border BorderBrush="#FF979797" BorderThickness="0,0,0,1" HorizontalAlignment="Left" Height="57" VerticalAlignment="Top" Width="220">
+			<Grid>
+				<Label x:Name="lblName" Content="name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" FontSize="16" Foreground="#FF0080FF"/>
+				<Label x:Name="lblCreationDate" Content="creationDate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Foreground="#FF959595" FontStyle="Italic" Margin="0,32.04,0,0" FontSize="10.667"/>
+			</Grid>
+		</Border>
+	</Grid>
+</UserControl>
