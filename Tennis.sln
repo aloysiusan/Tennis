@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationGUI", "Applicati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shapes", "Shapes\Shapes.csproj", "{6896F82E-A09B-4E65-878D-83C19129EC9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicController", "LogicController\LogicController.csproj", "{A6747744-F239-418C-A176-7A7443431674}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controllers", "LogicController\Controllers.csproj", "{A6747744-F239-418C-A176-7A7443431674}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParseHandler", "ParseHandler\ParseHandler.csproj", "{FA32B9FE-FF32-4513-A30A-E443B4347C31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TennisEventArgs", "TParseEventsArgs\TennisEventArgs.csproj", "{1F4DA600-1177-49C0-941C-CA4E6D4E182B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{FA32B9FE-FF32-4513-A30A-E443B4347C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA32B9FE-FF32-4513-A30A-E443B4347C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA32B9FE-FF32-4513-A30A-E443B4347C31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F4DA600-1177-49C0-941C-CA4E6D4E182B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F4DA600-1177-49C0-941C-CA4E6D4E182B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F4DA600-1177-49C0-941C-CA4E6D4E182B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F4DA600-1177-49C0-941C-CA4E6D4E182B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
