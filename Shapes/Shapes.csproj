@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TShape.cs" />
+    <Compile Include="TArc.cs" />
+    <Compile Include="TLine.cs" />
     <Compile Include="TPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

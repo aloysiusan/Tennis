@@ -10,7 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using Tennis.Shapes;
+using Tennis.Design;
 
 namespace Tennis.ApplicationGUI
 {
@@ -19,29 +20,54 @@ namespace Tennis.ApplicationGUI
 	/// </summary>
     /// 
 
-    /* Porcentaje de localización inicial X de los puntos en el Canvas:
-     * A = 10%
-     * B = 40%
-     * C = 60%
-     * D = 90%
-     * E = 10%
-     */
-
-    /* Porcentaje de localización inicial Y de los puntos en el Canvas:
-    * A = 20%
-    * B = 10%
-    * C = 50%
-    * D = 90%
-    * E = 90%
-    */
-
     public partial class Designer : UserControl
-	{
-
+	{       
 		public Designer()
 		{
             this.InitializeComponent();
 		}
+
+        public void drawDefaultDesign()
+        {
+            TDesign newDesign = new TDesign(this.ActualWidth, this.ActualHeight);
+            this.drawDesign(newDesign);
+        }
+
+        public void drawDesign(TDesign pDesign)
+        {
+            this.drawDesignPoint(pDesign.getPointA());
+            this.drawDesignPoint(pDesign.getPointB());
+            this.drawDesignPoint(pDesign.getPointC());
+            this.drawDesignPoint(pDesign.getPointD());
+            this.drawDesignPoint(pDesign.getPointE());
+        }
+
+        private void drawDesignPoint(TPoint pPoint)
+        {
+            Ellipse guiPoint = new Ellipse();
+            guiPoint.Uid = pPoint.getID();
+            guiPoint.Height = TPoint.RADIUS;
+            guiPoint.Width = TPoint.RADIUS;
+            guiPoint.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.COLOR));
+            guiPoint.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.COLOR));
+            guiPoint.StrokeThickness = 1;
+            guiPoint.MouseLeftButtonUp +=guiPoint_MouseLeftButtonUp;
+            guiPoint.MouseMove +=guiPoint_MouseMove;
+            guiPoint.MouseLeftButtonDown +=guiPoint_MouseLeftButtonDown;
+            Canvas.SetLeft(guiPoint, pPoint.getXPosition());
+            Canvas.SetTop(guiPoint, pPoint.getYPosition());
+            this.root.Children.Add(guiPoint);
+        }
+
+        private void drawDesignLine(TDesign pDesign)
+        {
+
+        }
+
+        private void drawDesignArc(TDesign pDesign)
+        {
+
+        }
 
         void guiPoint_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -57,5 +83,6 @@ namespace Tennis.ApplicationGUI
         {
             throw new NotImplementedException();
         }
+
 	}
 }

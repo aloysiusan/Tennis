@@ -20,16 +20,24 @@ namespace Tennis.Shapes{
             DefaultPointD_YPosition = 9,
             DefaultPointE_YPosition = 9
         }
+
+        private String id = "";
         private double XPosition = 0;
         private double YPosition = 0;
         public static readonly double RADIUS = 4;
         private readonly int POSITION_OFFSET = 2; /* RADIUS / 2 */
         public static readonly String COLOR = "#FF0000";
 
-        public TPoint(double pDesignerWidth, double pDesignerHeight, DefaultPosition pDefaultPositionX, DefaultPosition pDefaultPositionY)
+        public TPoint(String pID, double pDesignerWidth, double pDesignerHeight, DefaultPosition pDefaultPositionX, DefaultPosition pDefaultPositionY)
         {
+            id = pID;
             XPosition = pDesignerWidth * (double)pDefaultPositionX/10 - POSITION_OFFSET;
             YPosition = pDesignerHeight * (double)pDefaultPositionY/10 - POSITION_OFFSET;
+        }
+
+        public string getID()
+        {
+            return id;
         }
 
         public double getXPosition()

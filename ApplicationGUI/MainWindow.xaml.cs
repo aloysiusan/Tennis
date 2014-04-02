@@ -27,12 +27,15 @@ namespace Tennis.ApplicationGUI
         public MainWindow()
         {
             InitializeComponent();
+            
             AppMainController.Instance().designsReady_EventHandler += new EventHandler<TennisEventArgs>(this.fillListWithDesigns);
             AppMainController.Instance().designCreationStatusReady_EventHandler += new EventHandler<TennisEventArgs>(this.createDesign);
+        
         }
         
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
             AppMainController.Instance().requestDesignsFromDataBase();
         }
         
@@ -54,7 +57,8 @@ namespace Tennis.ApplicationGUI
             }
 
             if (e.Key == Key.Enter && txtNewName.Text != "")
-            {                
+            {
+                Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
                 AppMainController.Instance().requestNewDesignCreation(txtNewName.Text);
                 insertNameMessageView.Visibility = Visibility.Hidden;
                 txtNewName.Clear();
@@ -67,29 +71,41 @@ namespace Tennis.ApplicationGUI
            
         }
 
-        private void fillListWithDesigns(object sender, TennisEventArgs args) { 
-            
-            foreach(Dictionary<string,string[]> obj in args.ParseData){
-                foreach (var entry in obj)
+        private void fillListWithDesigns(object sender, TennisEventArgs args) {
+            Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
+            if (args.FinishedSuccessfully)
+            {
+                foreach (Dictionary<string, string[]> obj in args.ParseData)
                 {
-                    Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton(entry.Key, entry.Value[0], entry.Value[1]))));                    
+                    foreach (var entry in obj)
+                    {
+                        Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton(entry.Key, entry.Value[0], entry.Value[1], false))));
+                    }
                 }
             }
+            else
+            {
+                MessageBox.Show("Ha ocurrido un error al intentar cargar los diseños. Por favor verifique su conexión y vuelva a intentarlo.","Error al Conectar",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
+            Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
         }
 
         private void createDesign(object sender, TennisEventArgs args)
         {
             if (args.FinishedSuccessfully)
             {
-                Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Clear()));                
-                AppMainController.Instance().requestDesignsFromDataBase();
+                //Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Clear()));                
+                //AppMainController.Instance().requestDesignsFromDataBase();
                 Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
-                //Dispatcher.BeginInvoke(new Action(() => DesignButton.getInstances().LastOrDefault().setSelected()));     
-                 Dispatcher.BeginInvoke(new Action(() => Console.WriteLine(DesignButton.getInstances().LastOrDefault().getName())));
+                //Dispatcher.BeginInvoke(new Action(() => DesignButton.getInstances()[DesignButton.getInstances().Count - 1].setSelected()));     
+               // Dispatcher.BeginInvoke(new Action(() => Console.WriteLine(DesignButton.getInstances().Count)));
+                Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton("test", "test", "test", true))));
+                Dispatcher.BeginInvoke(new Action(() => designerView.drawDefaultDesign()));
+                Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
             }
             else
             {
-                MessageBox.Show("Ha ocurrido un error al intentar crear el nuevo diseño.");
+                MessageBox.Show("Ha ocurrido un error al intentar crear el nuevo diseño.", "Error Inesperado", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

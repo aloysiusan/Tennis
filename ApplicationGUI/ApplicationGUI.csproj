@@ -125,6 +125,14 @@
       <Project>{a6747744-f239-418c-a176-7a7443431674}</Project>
       <Name>Controllers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Shapes\Shapes.csproj">
+      <Project>{6896f82e-a09b-4e65-878d-83c19129ec9a}</Project>
+      <Name>Shapes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TDesign\TDesign.csproj">
+      <Project>{282e683f-d074-4b86-8e54-dd83f6855abd}</Project>
+      <Name>TDesign</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TParseEventsArgs\TennisEventArgs.csproj">
       <Project>{1f4da600-1177-49c0-941c-ca4e6d4e182b}</Project>
       <Name>TennisEventArgs</Name>

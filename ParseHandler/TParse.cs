@@ -34,20 +34,29 @@ namespace Tennis.ParseHandler
             List<object> dataList = new List<object>();
             var query = ParseObject.GetQuery("Designs");
             await query.FindAsync().ContinueWith(t =>
-            {                
-                IEnumerable<ParseObject> results = t.Result;
-                foreach (var obj in results)
+            {
+                bool success = true;
+                try
                 {
-                    var id = obj.ObjectId;
-                    Dictionary<string, string[]> info = new Dictionary<string, string[]>();
-                    info.Add((string)id, new string[2] { obj.Get<string>("name"), obj.CreatedAt.ToString() });
-                    dataList.Add(info);
+                    IEnumerable<ParseObject> results = t.Result;
+                    foreach (var obj in results)
+                    {
+                        var id = obj.ObjectId;
+                        Dictionary<string, string[]> info = new Dictionary<string, string[]>();
+                        info.Add((string)id, new string[2] { obj.Get<string>("name"), obj.CreatedAt.ToString() });
+                        dataList.Add(info);
+                    }
                 }
-
-                EventHandler<TennisEventArgs> handler = designsDataFinishedDownloading_EventHandler;
-                if (handler != null)
+                catch (AggregateException) { success = false; }
+                finally
                 {
-                    handler(this, new TennisEventArgs(dataList));
+                    EventHandler<TennisEventArgs> handler = designsDataFinishedDownloading_EventHandler;
+                    if (handler != null)
+                    {
+                        TennisEventArgs args = new TennisEventArgs(dataList);
+                        args.FinishedSuccessfully = success;
+                        handler(this, args);
+                    }
                 }
 
             });

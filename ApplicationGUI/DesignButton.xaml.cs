@@ -22,13 +22,14 @@ namespace Tennis.ApplicationGUI
         private bool isSelected;
         private static List<DesignButton> instances = new List<DesignButton>();
         private static readonly SolidColorBrush THEME_BLUE = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x80, 0xFF));
-		public DesignButton(String pID, String pName, String pCreationDate)
+		public DesignButton(String pID, String pName, String pCreationDate, bool pSelected)
 		{
 			this.InitializeComponent();
             _ID = pID;
             lblName.Content = pName;
             lblCreationDate.Content = pCreationDate;
             instances.Add(this);
+            if (pSelected) setSelected();
 		}
 
         public static List<DesignButton> getInstances()

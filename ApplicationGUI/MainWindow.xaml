@@ -208,9 +208,11 @@
 			<StackPanel x:Name="desingsList" CanVerticallyScroll="True" MaxWidth="220" MinWidth="220" Width="220"/>
 		</ScrollViewer>
 		<Grid Height="44" VerticalAlignment="Top" Width="220" HorizontalAlignment="Left" Background="White">
-			<Border BorderBrush="#FF979797" BorderThickness="0,0,0,1" HorizontalAlignment="Left" Height="44" VerticalAlignment="Top" Width="220"/>
-			<Label Content="Diseños" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" FontSize="18.667" Foreground="#FF008AFF" Height="32" Width="78" Padding="5,3,5,5"/>
-			<Button x:Name="btnNewDesign" Content="+" HorizontalAlignment="Left" Margin="188,5,0,0" VerticalAlignment="Top" Width="32" FontSize="18.667" Background="{x:Null}" Foreground="#FF008AFF" BorderBrush="{x:Null}" Height="32" VerticalContentAlignment="Top" Style="{DynamicResource btnPlainStyle}" Click="btnNewDesign_Click" FontWeight="Bold" ToolTip="Nuevo Diseño"/>
+			<Border BorderBrush="#FF979797" BorderThickness="0,0,0,1" HorizontalAlignment="Left" Height="44" VerticalAlignment="Top" Width="220">
+                <ProgressBar x:Name="waitingProgress" IsIndeterminate="True" Height="3" VerticalAlignment="Bottom" Foreground="#FF008AFF" BorderBrush="White" Background="White" Margin="0"/>
+            </Border>
+            <Label Content="Diseños" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" FontSize="18.667" Foreground="#FF008AFF" Height="32" Width="78" Padding="5,3,5,5"/>
+			<Button x:Name="btnNewDesign" Content="+" HorizontalAlignment="Left" Margin="188,5,0,0" VerticalAlignment="Top" Width="32" FontSize="18.667" Background="{x:Null}" Foreground="#FF008AFF" BorderBrush="{x:Null}" Height="32" VerticalContentAlignment="Top" Style="{DynamicResource btnPlainStyle}" Click="btnNewDesign_Click" FontWeight="Bold" ToolTip="Nuevo Diseño" IsEnabled="False"/>
 		</Grid>
 		<Grid Height="44" VerticalAlignment="Top" Background="White" Margin="221,0,0,0">
 			<Border BorderBrush="#FF979797" BorderThickness="0,0,0,1" Height="44" VerticalAlignment="Top">
