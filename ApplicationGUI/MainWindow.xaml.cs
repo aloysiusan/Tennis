@@ -93,15 +93,16 @@ namespace Tennis.ApplicationGUI
         private void createDesign(object sender, TennisEventArgs args)
         {
             if (args.FinishedSuccessfully)
-            {
-                //Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Clear()));                
-                //AppMainController.Instance().requestDesignsFromDataBase();
-                Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
-                //Dispatcher.BeginInvoke(new Action(() => DesignButton.getInstances()[DesignButton.getInstances().Count - 1].setSelected()));     
-               // Dispatcher.BeginInvoke(new Action(() => Console.WriteLine(DesignButton.getInstances().Count)));
-                Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton("test", "test", "test", true))));
-                Dispatcher.BeginInvoke(new Action(() => designerView.drawDefaultDesign()));
-                Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
+            {                
+                Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));               
+                Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));               
+
+                foreach (var entry in args.CreatedDesignData)
+                {
+                    Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton(entry.Key, entry.Value[0], entry.Value[1], true))));
+                    Dispatcher.BeginInvoke(new Action(() => designerView.drawDefaultDesignUsingID(entry.Key)));
+                    Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = entry.Value[0]));
+                }
             }
             else
             {

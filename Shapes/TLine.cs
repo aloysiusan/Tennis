@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Tennis.Shapes
 {
-    public class TLine : TShape
+    public class TLine
     {
         public TPoint startPoint;
         public TPoint endPoint;
         public int thickness = 1;
+        public String color = "#000000";
+        public static readonly int POSITION_OFFSET = 2; /* POINT RADIUS / 2 */
 
         public TLine(TPoint pStartPoint, TPoint pEndPoint)
         {

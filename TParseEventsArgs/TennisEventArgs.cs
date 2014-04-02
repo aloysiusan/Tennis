@@ -10,6 +10,7 @@ namespace Tennis.TEventArgs
     {
         private IEnumerable<object> _ParseData;
         private bool _FinishedSuccessfully;
+        private Dictionary<string, string[]> _CreatedDesignData;
 
         public TennisEventArgs(IEnumerable<object> pData)
         {
@@ -19,6 +20,11 @@ namespace Tennis.TEventArgs
         public TennisEventArgs(bool pSuccessfully)
         {
             _FinishedSuccessfully = pSuccessfully;
+        }
+
+        public TennisEventArgs(Dictionary<string, string[]> pCreatedDesignData)
+        {
+            _CreatedDesignData = pCreatedDesignData;
         }
 
         public IEnumerable<object> ParseData
@@ -31,6 +37,12 @@ namespace Tennis.TEventArgs
         {
             get { return _FinishedSuccessfully; }
             set { _FinishedSuccessfully = value; }
+        }
+
+        public Dictionary<string, string[]> CreatedDesignData
+        {
+            get { return _CreatedDesignData; }
+            set { _CreatedDesignData = value; }
         }
     }
 }

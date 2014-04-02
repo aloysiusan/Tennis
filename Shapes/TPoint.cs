@@ -21,21 +21,21 @@ namespace Tennis.Shapes{
             DefaultPointE_YPosition = 9
         }
 
-        private String id = "";
+        private char id;
         private double XPosition = 0;
         private double YPosition = 0;
         public static readonly double RADIUS = 4;
         private readonly int POSITION_OFFSET = 2; /* RADIUS / 2 */
         public static readonly String COLOR = "#FF0000";
 
-        public TPoint(String pID, double pDesignerWidth, double pDesignerHeight, DefaultPosition pDefaultPositionX, DefaultPosition pDefaultPositionY)
+        public TPoint(char pID, double pDesignerWidth, double pDesignerHeight, DefaultPosition pDefaultPositionX, DefaultPosition pDefaultPositionY)
         {
             id = pID;
             XPosition = pDesignerWidth * (double)pDefaultPositionX/10 - POSITION_OFFSET;
             YPosition = pDesignerHeight * (double)pDefaultPositionY/10 - POSITION_OFFSET;
         }
 
-        public string getID()
+        public char getID()
         {
             return id;
         }

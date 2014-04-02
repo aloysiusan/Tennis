@@ -4,16 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tennis.TEventArgs;
-
+using Tennis.Design;
 namespace Tennis.Controllers
-{
+{   
+
     public class AppMainController
     {
+        public enum VisualizationMode
+        {
+            Arcade, 
+            Fire, 
+            Edit
+        }
+
         //Event Handlers
         public event EventHandler<TennisEventArgs> designsReady_EventHandler;
         public event EventHandler<TennisEventArgs> designCreationStatusReady_EventHandler;
 
         private static AppMainController instance;
+        public VisualizationMode selectedMode;
+        private TDesign currentDesign;
 
         private AppMainController() {
             DataController.Instance().designsFinishedDownloading_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignsRecieved);
@@ -27,6 +37,16 @@ namespace Tennis.Controllers
                 instance = new AppMainController();
             }
             return instance;
+        }
+
+        public void setCurrentDesign(TDesign pDesign)
+        {
+            currentDesign = pDesign;
+        }
+
+        public TDesign getCurrentDesign()
+        {
+            return currentDesign;
         }
 
         public void requestDesignsFromDataBase()
@@ -49,7 +69,7 @@ namespace Tennis.Controllers
         }
 
         public void OnDesignCreationResponseRecieved(object sender, TennisEventArgs args)
-        {
+        {            
             EventHandler<TennisEventArgs> handler = designCreationStatusReady_EventHandler;
             if (handler != null)
             {

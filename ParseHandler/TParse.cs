@@ -72,14 +72,25 @@ namespace Tennis.ParseHandler
             {
                 await newDesign.SaveAsync().ContinueWith(t =>
                 {
-                    EventHandler<TennisEventArgs> handler = designCreationFinished_EventHandler;
-                    if (handler != null)
-                    {                        
-                        handler(this, new TennisEventArgs(true));
-                    }
+                    Dictionary<string, string[]> createdDesign = new Dictionary<string, string[]>();
+                    var query = ParseObject.GetQuery("Designs");
+
+                    query.OrderByDescending("createdAt").FirstAsync().ContinueWith(t2 => {
+                        ParseObject result = t2.Result;
+                        createdDesign.Add((string)result.ObjectId, new string[2] { result.Get<string>("name"), result.CreatedAt.ToString() });
+                        EventHandler<TennisEventArgs> handler = designCreationFinished_EventHandler;
+                        if (handler != null)
+                        {
+                            TennisEventArgs args = new TennisEventArgs(createdDesign);
+                            args.FinishedSuccessfully = true;
+                            handler(this, args);
+                        }        
+                
+                    });
+                    
                 });
             }
-            catch (ParseException p) {
+            catch (ParseException) {
                 EventHandler<TennisEventArgs> handler = designCreationFinished_EventHandler;
                 if (handler != null)
                 {

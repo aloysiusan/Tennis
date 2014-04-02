@@ -6,18 +6,21 @@ using System.Threading.Tasks;
 
 namespace Tennis.Shapes
 {
-    class TArc
+    public class TArc
     {
         public double angle = 0;
         public TPoint startPoint;
         public TPoint endPoint;
         public int thickness = 1;
+        public bool inverted;
+        public String color = "#000000";
+        public static readonly int POSITION_OFFSET = 2; /* POINT RADIUS / 2 */
 
-        public TArc(TPoint pStartPoint, TPoint pEndPoint, double pAngle)
+        public TArc(TPoint pStartPoint, TPoint pEndPoint, bool pIsInverted)
         {
             startPoint = pStartPoint;
             endPoint = pEndPoint;
-            angle = pAngle;
+            inverted = pIsInverted;            
         }
     }
 }

@@ -48,6 +48,10 @@
       <Project>{fa32b9fe-ff32-4513-a30a-e443b4347c31}</Project>
       <Name>ParseHandler</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TDesign\TDesign.csproj">
+      <Project>{282e683f-d074-4b86-8e54-dd83f6855abd}</Project>
+      <Name>TDesign</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TParseEventsArgs\TennisEventArgs.csproj">
       <Project>{1f4da600-1177-49c0-941c-ca4e6d4e182b}</Project>
       <Name>TennisEventArgs</Name>
