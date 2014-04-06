@@ -199,6 +199,41 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+		<Style x:Key="settingHeaderStyle" TargetType="{x:Type Label}">
+			<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Padding" Value="5"/>
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+			<Setter Property="VerticalContentAlignment" Value="Top"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Label}">
+						<Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+							<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsEnabled" Value="false">
+								<Setter Property="Border.Background" TargetName="border" Value="#FFE0E0E0"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<LinearGradientBrush x:Key="TabItem.Static.Background" EndPoint="0,1" StartPoint="0,0">
+			<GradientStop Color="#F0F0F0" Offset="0.0"/>
+			<GradientStop Color="#E5E5E5" Offset="1.0"/>
+		</LinearGradientBrush>
+		<SolidColorBrush x:Key="TabItem.Static.Border" Color="#ACACAC"/>
+		<LinearGradientBrush x:Key="TabItem.MouseOver.Background" EndPoint="0,1" StartPoint="0,0">
+			<GradientStop Color="#ECF4FC" Offset="0.0"/>
+			<GradientStop Color="#DCECFC" Offset="1.0"/>
+		</LinearGradientBrush>
+		<SolidColorBrush x:Key="TabItem.MouseOver.Border" Color="#7EB4EA"/>
+		<SolidColorBrush x:Key="TabItem.Disabled.Background" Color="#F0F0F0"/>
+		<SolidColorBrush x:Key="TabItem.Disabled.Border" Color="#D9D9D9"/>
+		<SolidColorBrush x:Key="TabItem.Selected.Border" Color="#ACACAC"/>
+		<SolidColorBrush x:Key="TabItem.Selected.Background" Color="#FFFFFF"/>		
 	</Window.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -209,7 +244,7 @@
 		</ScrollViewer>
 		<Grid Height="44" VerticalAlignment="Top" Width="220" HorizontalAlignment="Left" Background="White">
 			<Border BorderBrush="#FF979797" BorderThickness="0,0,0,1" HorizontalAlignment="Left" Height="44" VerticalAlignment="Top" Width="220">
-                <ProgressBar x:Name="waitingProgress" IsIndeterminate="True" Height="3" VerticalAlignment="Bottom" Foreground="#FF008AFF" BorderBrush="White" Background="White" Margin="0"/>
+                <ProgressBar x:Name="waitingProgress" Height="3" VerticalAlignment="Bottom" Foreground="#FF008AFF" BorderBrush="White" Background="White" Margin="0" IsIndeterminate="True"/>
             </Border>
             <Label Content="Diseños" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" FontSize="18.667" Foreground="#FF008AFF" Height="32" Width="78" Padding="5,3,5,5"/>
 			<Button x:Name="btnNewDesign" Content="+" HorizontalAlignment="Left" Margin="188,5,0,0" VerticalAlignment="Top" Width="32" FontSize="18.667" Background="{x:Null}" Foreground="#FF008AFF" BorderBrush="{x:Null}" Height="32" VerticalContentAlignment="Top" Style="{DynamicResource btnPlainStyle}" Click="btnNewDesign_Click" FontWeight="Bold" ToolTip="Nuevo Diseño" IsEnabled="False"/>
@@ -217,51 +252,53 @@
 		<Grid Height="44" VerticalAlignment="Top" Background="White" Margin="221,0,0,0">
 			<Border BorderBrush="#FF979797" BorderThickness="0,0,0,1" Height="44" VerticalAlignment="Top">
 				<Grid>
-					<Label x:Name="lblDesignName" Content="designName" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" Foreground="#FF008AFF" Height="32" Padding="5" Margin="10,5,0,0" FontStyle="Italic"/>
+					<Label x:Name="lblDesignName" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" Foreground="#FF008AFF" Height="32" Padding="5" Margin="10,5,0,0" FontStyle="Italic"/>
 					<Button x:Name="btnReports" Content="=" HorizontalAlignment="Right" Margin="0,5,10,0" VerticalAlignment="Top" Width="32" FontSize="18.667" Background="{x:Null}" Foreground="#FF008AFF" BorderBrush="{x:Null}" Height="32" VerticalContentAlignment="Top" Style="{DynamicResource btnPlainStyle}" Click="btnNewDesign_Click" FontWeight="Bold" ToolTip="Reportes"/>
 				</Grid>
 			</Border>
 		</Grid>
 		<Path Data="M279,517 L279,0" Fill="#FFF4F4F5" HorizontalAlignment="Left" Stretch="Fill" Stroke="#FF979797" Width="1" Margin="220,0,0,0"/>
-		<Path Data="M279,517 L279,0" Fill="#FFF4F4F5" HorizontalAlignment="Right" Stretch="Fill" Stroke="#FF979797" Width="1" Margin="0,43,220,43" RenderTransformOrigin="0.5,0.5"/>
-		<Grid x:Name="lineSettingsGrid" HorizontalAlignment="Right" Height="106" Margin="0,44,0,0" VerticalAlignment="Top" Width="220">
-			<Path x:Name="lineObject" Data="M344,276 L374,253" HorizontalAlignment="Left" Height="32" Margin="178,64,0,0" Stretch="Fill" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32"/>
-			<Label Content="Línea" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" HorizontalAlignment="Right" Width="220"/>
-			<Slider x:Name="lineThicknessSld" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="lineThicknessSld_ValueChanged"/>
-			<Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
-			<Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
-			<Label x:Name="lineThicknessLbl" Content="1px" HorizontalAlignment="Left" Margin="183,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
-		</Grid>
-		<Grid HorizontalAlignment="Right" Height="79" Margin="0,150,0,0" VerticalAlignment="Top" Width="220">
-			<Label Content="Contorno" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" HorizontalAlignment="Right" Width="220"/>
-			<Slider HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1"/>
-			<Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
-			<Label Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
-			<Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
-		</Grid>
-		<Grid HorizontalAlignment="Right" Height="79" Margin="0,229,0,0" VerticalAlignment="Top" Width="220">
-			<Label Content="Suela" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" HorizontalAlignment="Right" Width="220"/>
-			<Slider HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1"/>
-			<Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
-			<Label Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
-			<Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
-		</Grid>
-		<Grid HorizontalAlignment="Right" Height="185" Margin="0,309,0,0" VerticalAlignment="Top" Width="220">
-			<Label Content="Adornos" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" HorizontalAlignment="Right" Width="220"/>
-			<Slider HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1"/>
-			<Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
-			<Label Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
-			<Label Content="Color de borde:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
-			<Label Content="Color de relleno:" HorizontalAlignment="Left" Margin="1.44,73.92,0,0" VerticalAlignment="Top"/>
-			<ed:RegularPolygon HorizontalAlignment="Left" Height="32" InnerRadius="1" Margin="52,119.88,0,0" Stretch="Fill" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
-			<Ellipse HorizontalAlignment="Left" Height="32" Margin="10,119.88,0,0" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
-			<Rectangle HorizontalAlignment="Left" Height="32" Margin="94,119.88,0,0" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
-			<ed:RegularPolygon HorizontalAlignment="Left" Height="32" InnerRadius="0.47211" Margin="136,119.88,0,0" PointCount="5" Stretch="Fill" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
-			<ed:RegularPolygon HorizontalAlignment="Left" Height="32" InnerRadius="1" Margin="178,119.88,0,0" PointCount="3" Stretch="Fill" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
-		</Grid>
-		<Viewbox Margin="220,44">
-			<local:Designer x:Name="designerView" Margin="5,0" MinWidth="260" MinHeight="130"/>
+		<Viewbox Margin="220,44,0,44" OpacityMask="White">
+			<local:Designer x:Name="designerView" Margin="5,0" MinWidth="260" MinHeight="130" BorderThickness="0" Background="White" BorderBrush="#FFE8E8E8" ClipToBounds="True"/>
 		</Viewbox>
+		<Grid x:Name="settingsView" Margin="0,44" HorizontalAlignment="Right" IsEnabled="False" Width="0">
+			<Grid x:Name="lineSettingsGrid" Height="106" VerticalAlignment="Top">
+				<Path x:Name="lineObject" Data="M344,276 L374,253" HorizontalAlignment="Left" Height="32" Margin="178,64,0,0" Stretch="Fill" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32"/>
+				<Label Content="Línea" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" Width="220" Style="{DynamicResource settingHeaderStyle}"/>
+				<Slider x:Name="lineThicknessSld" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="lineThicknessSld_ValueChanged"/>
+				<Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
+				<Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
+				<Label x:Name="lineThicknessLbl" Content="1px" HorizontalAlignment="Left" Margin="183,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
+			</Grid>
+			<Grid x:Name="borderSettingsGrid" Height="79" Margin="0,106,0,0" VerticalAlignment="Top">
+				<Label Content="Contorno" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" Style="{DynamicResource settingHeaderStyle}"/>
+				<Slider HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1"/>
+				<Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
+				<Label Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
+				<Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
+			</Grid>
+			<Grid x:Name="baseLineSettingsGrid" Height="79" Margin="0,185,0,0" VerticalAlignment="Top">
+				<Label Content="Suela" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" Width="220" Style="{DynamicResource settingHeaderStyle}"/>
+				<Slider HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1"/>
+				<Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
+				<Label Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
+				<Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
+			</Grid>
+			<Grid x:Name="shapesSettingsGrid" Height="166" Margin="0,265,0,0" VerticalAlignment="Top">
+				<Label Content="Adornos" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" Width="220" Style="{DynamicResource settingHeaderStyle}" IsEnabled="False"/>
+				<Slider HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1"/>
+				<Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
+				<Label Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
+				<Label Content="Color de borde:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
+				<Label Content="Color de relleno:" HorizontalAlignment="Left" Margin="1.44,73.92,0,0" VerticalAlignment="Top"/>
+				<ed:RegularPolygon HorizontalAlignment="Left" Height="32" InnerRadius="1" Margin="52,119.88,0,0" Stretch="Fill" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
+				<Ellipse HorizontalAlignment="Left" Height="32" Margin="10,119.88,0,0" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand" Fill="#00000000"/>
+				<Rectangle HorizontalAlignment="Left" Height="32" Margin="94,119.88,0,0" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
+				<ed:RegularPolygon HorizontalAlignment="Left" Height="32" InnerRadius="0.47211" Margin="136,119.88,0,0" PointCount="5" Stretch="Fill" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
+				<ed:RegularPolygon HorizontalAlignment="Left" Height="32" InnerRadius="1" Margin="178,119.88,0,0" PointCount="3" Stretch="Fill" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand"/>
+			</Grid>
+			<Path Data="M279,517 L279,0" Fill="#FFF4F4F5" HorizontalAlignment="Left" Stretch="Fill" Stroke="#FF979797" Width="1" Margin="0" RenderTransformOrigin="0.5,0.5"/>
+		</Grid>
 		<Border BorderBrush="#FF979797" BorderThickness="0,1,0,0" Height="44" VerticalAlignment="Bottom" Margin="220,0,1,0">
 			<Grid>
 				<RadioButton x:Name="rdbDrawArcade" Content="Pintar como Arcade" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top" Style="{DynamicResource radioButtonStyle}"/>

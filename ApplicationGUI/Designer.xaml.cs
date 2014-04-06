@@ -31,15 +31,10 @@ namespace Tennis.ApplicationGUI
             this.InitializeComponent();
 		}
 
-        public void drawDefaultDesignUsingID(String pID)
-        {
-            this.root.Children.Clear();
-            AppMainController.Instance().setCurrentDesign(new TDesign(pID,this.ActualWidth, this.ActualHeight));
-            this.drawDesign(AppMainController.Instance().getCurrentDesign());
-        }
-
         public void drawDesign(TDesign pDesign)
         {
+            this.root.Children.Clear();
+            this.BorderThickness = new Thickness(1);
             this.drawDesignLines(pDesign);
             this.drawDesignArcs(pDesign);
 
@@ -71,7 +66,7 @@ namespace Tennis.ApplicationGUI
 
         private void drawDesignLines(TDesign pDesign)
         {
-            foreach(TLine line in pDesign.getDesignLines()){
+            foreach(TLine line in pDesign.designLines){
                 Line guiLine = new Line();
                 guiLine.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(line.color));
                 guiLine.X1 = line.startPoint.getXPosition() + TLine.POSITION_OFFSET;
@@ -82,11 +77,24 @@ namespace Tennis.ApplicationGUI
                 
                 this.root.Children.Add(guiLine);
             }
+
+            //Suela es una linea aparte
+            Line baseLine = new Line();
+            TLine baseLineData = pDesign.baseLine;
+            baseLine.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(baseLineData.color));
+            baseLine.X1 = baseLineData.startPoint.getXPosition() + TLine.POSITION_OFFSET;
+            baseLine.X2 = baseLineData.endPoint.getXPosition() + TLine.POSITION_OFFSET;
+            baseLine.Y1 = baseLineData.startPoint.getYPosition() + TLine.POSITION_OFFSET;
+            baseLine.Y2 = baseLineData.endPoint.getYPosition() + TLine.POSITION_OFFSET;
+            baseLine.StrokeThickness = baseLineData.thickness;
+            baseLineData = null;
+
+            this.root.Children.Add(baseLine);
         }
 
         private void drawDesignArcs(TDesign pDesign)
         {
-            foreach (TArc arc in pDesign.getDesignArcs())
+            foreach (TArc arc in pDesign.designArcs)
             {
                 PathGeometry pathGeometry = new PathGeometry();
                 PathFigure figure = new PathFigure();
@@ -111,8 +119,8 @@ namespace Tennis.ApplicationGUI
                 if (p.X >= 0 && p.X <= this.root.ActualWidth
                     && p.Y >= 0 && p.Y <= this.root.ActualHeight)
                 {
-                    AppMainController.Instance().getCurrentDesign().getPointWithID(selectedPoint.Uid[0]).setXPosition(p.X);
-                    AppMainController.Instance().getCurrentDesign().getPointWithID(selectedPoint.Uid[0]).setYPosition(p.Y);
+                    AppMainController.Instance().getCurrentDesign().getPointWithID(selectedPoint.Uid[0]).setXPositionRelative(p.X, this.ActualWidth);
+                    AppMainController.Instance().getCurrentDesign().getPointWithID(selectedPoint.Uid[0]).setYPositionRelative(p.Y, this.ActualHeight);
                 }
                 selectedPoint.ReleaseMouseCapture();
                 Canvas.SetZIndex(selectedPoint, 0);

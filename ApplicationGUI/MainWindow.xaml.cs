@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Tennis.Controllers;
 using Tennis.TEventArgs;
+using Tennis.Parse.Rows;
 
 namespace Tennis.ApplicationGUI
 {
@@ -29,8 +30,8 @@ namespace Tennis.ApplicationGUI
             InitializeComponent();
             
             AppMainController.Instance().designsReady_EventHandler += new EventHandler<TennisEventArgs>(this.fillListWithDesigns);
-            AppMainController.Instance().designCreationStatusReady_EventHandler += new EventHandler<TennisEventArgs>(this.createDesign);
-        
+            AppMainController.Instance().designCreationStatusFailed_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationFailed);
+            AppMainController.Instance().designDataReady_EventHandler += new EventHandler<TennisEventArgs>(this.loadCurrentDesign);
         }
         
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -74,13 +75,10 @@ namespace Tennis.ApplicationGUI
         private void fillListWithDesigns(object sender, TennisEventArgs args) {
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
             if (args.FinishedSuccessfully)
-            {
-                foreach (Dictionary<string, string[]> obj in args.ParseData)
+            {                
+                foreach (string[] obj in args.DesignsList)
                 {
-                    foreach (var entry in obj)
-                    {
-                        Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton(entry.Key, entry.Value[0], entry.Value[1], false))));
-                    }
+                    Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton(obj[0], obj[1], obj[2], false, OnDesignItemSelected))));                    
                 }
             }
             else
@@ -90,23 +88,46 @@ namespace Tennis.ApplicationGUI
             Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
         }
 
-        private void createDesign(object sender, TennisEventArgs args)
-        {
-            if (args.FinishedSuccessfully)
-            {                
-                Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));               
-                Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));               
+        private void OnDesignCreationFailed(object sender, TennisEventArgs args)
+        {            
+            if (!args.FinishedSuccessfully)
+            {
+                MessageBox.Show("Ha ocurrido un error al intentar crear el nuevo diseño.", "Error Inesperado", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-                foreach (var entry in args.CreatedDesignData)
-                {
-                    Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton(entry.Key, entry.Value[0], entry.Value[1], true))));
-                    Dispatcher.BeginInvoke(new Action(() => designerView.drawDefaultDesignUsingID(entry.Key)));
-                    Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = entry.Value[0]));
-                }
+        private void OnDesignItemSelected(object sender, TennisEventArgs args)
+        {
+            if (args.IsNewDesign)
+            {
+                AppMainController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
+                Dispatcher.BeginInvoke(new Action(() => designerView.drawDesign(AppMainController.Instance().getCurrentDesign())));
             }
             else
             {
-                MessageBox.Show("Ha ocurrido un error al intentar crear el nuevo diseño.", "Error Inesperado", MessageBoxButton.OK, MessageBoxImage.Error);
+                Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
+                AppMainController.Instance().requestDesignForID(args.SelectedDesignID, false);
+            }
+        }
+
+        private void loadCurrentDesign(object sender, TennisEventArgs args)
+        {            
+            Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
+            Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
+
+            if (args.FinishedSuccessfully && args.IsNewDesign)
+            {
+                Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton((string)args.DesignData[0], (string)args.DesignData[1], 
+                    (string)args.DesignData[2], true, OnDesignItemSelected))));
+                Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));                
+            }
+            else
+            {                
+                AppMainController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
+                Dispatcher.BeginInvoke(new Action(() => designerView.drawDesign(AppMainController.Instance().getCurrentDesign())));
+                Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
+                //var dump = ObjectDumper.Dump(AppMainController.Instance().getCurrentDesign());
+                //.Write(dump);
             }
         }
     }

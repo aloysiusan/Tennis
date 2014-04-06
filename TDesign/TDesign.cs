@@ -24,18 +24,18 @@ namespace Tennis.Design
     */
     public class TDesign
     {
-        private TPoint pointA;
-        private TPoint pointB;
-        private TPoint pointC;
-        private TPoint pointD;
-        private TPoint pointE;
+        public TPoint pointA;
+        public TPoint pointB;
+        public TPoint pointC;
+        public TPoint pointD;
+        public TPoint pointE;
 
-        private List<TLine> designLines;
-        private List<TArc> designArcs;
+        public TLine[] designLines;
+        public TLine baseLine; //Suela
+        public TArc[] designArcs;       
+        
 
-        private String id;
-
-        public TDesign(String pID, double pContainerWidth, double pContainerHeight)
+        public TDesign( double pContainerWidth, double pContainerHeight)
         {
             pointA = new TPoint('a', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointA_XPosition, TPoint.DefaultPosition.DefaultPointA_YPosition);
             pointB = new TPoint('b', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointB_XPosition, TPoint.DefaultPosition.DefaultPointB_YPosition);
@@ -43,16 +43,16 @@ namespace Tennis.Design
             pointD = new TPoint('d', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointD_XPosition, TPoint.DefaultPosition.DefaultPointD_YPosition);
             pointE = new TPoint('e', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointE_XPosition, TPoint.DefaultPosition.DefaultPointE_YPosition);
 
-            id = pID;
+            designLines = new TLine[2];
+            designArcs = new  TArc[2];
 
-            designLines = new List<TLine>();
-            designArcs = new  List<TArc>();
+            designLines[0] = new TLine(pointB, pointC);
+            designLines[1] = new TLine(pointC, pointD);
+            
+            designArcs[0] = new TArc(pointE, pointA, false);
+            designArcs[1] = new TArc(pointA, pointB, false);
 
-            this.createLine(pointB, pointC);
-            this.createLine(pointC, pointD);
-            this.createLine(pointE, pointD);
-            this.createArc(pointE, pointA, false);
-            this.createArc(pointA, pointB, true);
+            baseLine = new TLine(pointE, pointD);
         }
 
         public TPoint getPointWithID(char pID)
@@ -74,7 +74,7 @@ namespace Tennis.Design
             }
         }
 
-        public void createLine(TPoint pStartPoint, TPoint pEndPoint){
+        /*public void createLine(TPoint pStartPoint, TPoint pEndPoint){
             TLine line = new TLine(pStartPoint, pEndPoint);
             designLines.Add(line);
         }
@@ -83,15 +83,27 @@ namespace Tennis.Design
             TArc arc = new TArc(pStartPoint, pEndPoint, pIsInverted);
             designArcs.Add(arc);
         }
-
-        public List<TLine> getDesignLines()
+        */
+        public void adjustPoints(double pRelativeWidth, double pRelativeHeight)
         {
-            return designLines;
-        }
+            pointA.adjustPosition(pRelativeWidth, pRelativeHeight);
+            pointB.adjustPosition(pRelativeWidth, pRelativeHeight);
+            pointC.adjustPosition(pRelativeWidth, pRelativeHeight);
+            pointD.adjustPosition(pRelativeWidth, pRelativeHeight);
+            pointE.adjustPosition(pRelativeWidth, pRelativeHeight);
 
-        public List<TArc> getDesignArcs()
-        {
-            return designArcs;
+            designLines[0].startPoint = pointB;
+            designLines[0].endPoint = pointC;
+            designLines[1].startPoint = pointC;
+            designLines[1].endPoint = pointD;
+
+            designArcs[0].startPoint = pointE;
+            designArcs[0].endPoint = pointA;
+            designArcs[1].startPoint = pointA;
+            designArcs[1].endPoint = pointB;
+
+            baseLine.startPoint = pointE;
+            baseLine.endPoint = pointD;
         }
     }
 }

@@ -7,9 +7,9 @@ using Parse;
 using System.Diagnostics;
 using Tennis.TEventArgs;
 
-namespace Tennis.ParseHandler
+namespace Tennis.Parse.Controller
 {
-    public class TParse
+    public class ParseController
     {
         //Event Handlers
         public event EventHandler<TennisEventArgs> designsDataFinishedDownloading_EventHandler;
@@ -17,21 +17,21 @@ namespace Tennis.ParseHandler
         public event EventHandler<TennisEventArgs> designLoadFinished_EventHandler;
         /*========================*/
 
-        private static TParse instance;
-        private TParse() { }
+        private static ParseController instance;
+        private ParseController() { }
 
-        public static TParse Instance()
+        public static ParseController Instance()
         {
             if (instance == null)
             {
-                instance = new TParse();
+                instance = new ParseController();
             }
             return instance;
         }
 
         public async void fetchAllDesignsMainInfo()
         {
-            String jsonResponse = "{\"designs\":[";
+            String jsonResponse = "[";
             var query = ParseObject.GetQuery("Designs");
             await query.FindAsync().ContinueWith(t =>
             {
@@ -40,10 +40,9 @@ namespace Tennis.ParseHandler
                 {
                     IEnumerable<ParseObject> results = t.Result;
                     foreach (var obj in results){
-                        jsonResponse += "{\"id\":" + (string)obj.ObjectId + ", \"name\":" + obj.Get<string>("name") + ",\"createdAt\":" + obj.CreatedAt.ToString() + "},";                        
+                        jsonResponse += "{\"id\":\"" + (string)obj.ObjectId + "\", \"name\":\"" + obj.Get<string>("name") + "\",\"createdAt\":\"" + obj.CreatedAt.ToString() + "\",\"data\":null},";                        
                     }
-                    jsonResponse += "]}";
-                    jsonResponse.Replace(",]", "]");
+                    jsonResponse += "]";
                     Console.WriteLine(jsonResponse);
                 }
                 catch (AggregateException) { success = false; }
@@ -53,7 +52,7 @@ namespace Tennis.ParseHandler
                     if (handler != null)
                     {
                         TennisEventArgs args = new TennisEventArgs();
-                        args.ParseData = jsonResponse;
+                        args.ParseJSONData = jsonResponse;
                         args.FinishedSuccessfully = success;
                         handler(this, args);
                     }
@@ -76,7 +75,7 @@ namespace Tennis.ParseHandler
 
                     query.OrderByDescending("createdAt").FirstAsync().ContinueWith(t2 => {
                         ParseObject result = t2.Result;
-                        this.fetchDesignDataForID((string)result.ObjectId);                               
+                        this.fetchDesignDataForID((string)result.ObjectId, true);                               
                     });
                     
                 });
@@ -92,7 +91,7 @@ namespace Tennis.ParseHandler
             }            
         }
 
-        public async void fetchDesignDataForID(String pID)
+        public async void fetchDesignDataForID(String pID, bool pIsNew)
         {
             String responseJson = "";
             ParseQuery<ParseObject> query = ParseObject.GetQuery("Designs");
@@ -102,14 +101,15 @@ namespace Tennis.ParseHandler
                 String name = result.Get<string>("name");
                 String createdAt = result.CreatedAt.ToString();
                 String data = result.Get<string>("data");
-                responseJson = "{\"id\":" + id + ",\"name\":" + name + ",\"createdAt\":" + createdAt + ",\"data\":" + data + "}";
+                responseJson = "{\"id\":\"" + id + "\",\"name\":\"" + name + "\",\"createdAt\":\"" + createdAt + "\",\"data\":" + data + "}";
             }) ;
 
             EventHandler<TennisEventArgs> handler = designLoadFinished_EventHandler;
             if (handler != null)
             {
                 TennisEventArgs args = new TennisEventArgs();
-                args.ParseData = responseJson;
+                args.IsNewDesign = pIsNew;
+                args.ParseJSONData = responseJson;
                 args.FinishedSuccessfully = true;
                 handler(this, args);
             }

@@ -21,9 +21,11 @@ namespace Tennis.Shapes{
             DefaultPointE_YPosition = 9
         }
 
-        private char id;
-        private double XPosition = 0;
-        private double YPosition = 0;
+        public char id;
+        public double XPosition = 0;
+        public double YPosition = 0;
+        public double globalXPositionPercent = 0;
+        public double globalYPositionPercent = 0;
         public static readonly double RADIUS = 4;
         private readonly int POSITION_OFFSET = 2; /* RADIUS / 2 */
         public static readonly String COLOR = "#FF0000";
@@ -33,15 +35,12 @@ namespace Tennis.Shapes{
             id = pID;
             XPosition = pDesignerWidth * (double)pDefaultPositionX/10 - POSITION_OFFSET;
             YPosition = pDesignerHeight * (double)pDefaultPositionY/10 - POSITION_OFFSET;
+            globalXPositionPercent = (double)pDefaultPositionX;
+            globalYPositionPercent = (double)pDefaultPositionY;
+
         }
 
-        public char getID()
-        {
-            return id;
-        }
-
-        public double getXPosition()
-        {
+        public double getXPosition(){
             return XPosition;
         }
 
@@ -50,14 +49,25 @@ namespace Tennis.Shapes{
             return YPosition;
         }
 
-        public void setXPosition(double pXPosition)
-        {
-            XPosition = pXPosition;
+        public void setXPositionRelative(double pPosition,double relativeWidth){
+            XPosition = pPosition;
+            globalXPositionPercent = 10 * (pPosition - POSITION_OFFSET) / relativeWidth;
         }
 
-        public void setYPosition(double pYPosition)
+        public void setYPositionRelative(double pPosition, double relativeHeight)
         {
-            YPosition = pYPosition;
+            YPosition = pPosition;
+            globalYPositionPercent = 10 * (pPosition - POSITION_OFFSET) / relativeHeight;
+        }
+
+        public void adjustPosition(double pRelativeWidth, double pRelativeHeight)
+        {
+            XPosition = pRelativeWidth * (double)globalXPositionPercent / 10 - POSITION_OFFSET;
+            YPosition = pRelativeHeight * (double)globalYPositionPercent / 10 - POSITION_OFFSET;            
+        }
+        public char getID()
+        {
+            return id;
         }
     }
 }

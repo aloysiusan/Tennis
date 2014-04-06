@@ -8,29 +8,36 @@ namespace Tennis.TEventArgs
 {
     public class TennisEventArgs : EventArgs
     {
-        private IEnumerable<object> _ParseData;
+        private String _ParseJSONData;
         private bool _FinishedSuccessfully;
-        private Dictionary<string, string[]> _CreatedDesignData;
+        private bool _isNewDesign;
+        private String _selectedDesignID;
+        private object _ParseObjectData;
+        private object[] _DesignData;
+        private List<object> _DesignsList;
 
-        public TennisEventArgs(IEnumerable<object> pData)
+        public String ParseJSONData
         {
-            _ParseData = pData;
+            get { return _ParseJSONData; }
+            set { _ParseJSONData = value; }
         }
 
-        public TennisEventArgs(bool pSuccessfully)
+        public object ParseObjectData
         {
-            _FinishedSuccessfully = pSuccessfully;
+            get { return _ParseObjectData; }
+            set { _ParseObjectData = value; }
         }
 
-        public TennisEventArgs(Dictionary<string, string[]> pCreatedDesignData)
+        public object[] DesignData
         {
-            _CreatedDesignData = pCreatedDesignData;
+            get { return _DesignData; }
+            set { _DesignData = value; }
         }
 
-        public IEnumerable<object> ParseData
+        public List<Object> DesignsList
         {
-            get { return _ParseData; }
-            set { _ParseData = value; }
+            get { return _DesignsList; }
+            set { _DesignsList = value; }
         }
 
         public bool FinishedSuccessfully
@@ -39,10 +46,16 @@ namespace Tennis.TEventArgs
             set { _FinishedSuccessfully = value; }
         }
 
-        public Dictionary<string, string[]> CreatedDesignData
+        public bool IsNewDesign
         {
-            get { return _CreatedDesignData; }
-            set { _CreatedDesignData = value; }
+            get { return _isNewDesign; }
+            set { _isNewDesign = value; }
+        }
+
+        public string SelectedDesignID
+        {
+            get { return _selectedDesignID; }
+            set { _selectedDesignID = value; }
         }
     }
 }
