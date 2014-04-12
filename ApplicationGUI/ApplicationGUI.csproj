@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Tennis.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Expression.Drawing" />
     <Reference Include="Parse, Version=1.2.14.0, Culture=neutral, PublicKeyToken=ba48c3a442de616e, processorArchitecture=MSIL">
@@ -62,15 +65,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="DesignButton.xaml">
+    <Compile Include="InterfaceClasses\ArcadeVisualizationMode.cs" />
+    <Compile Include="InterfaceClasses\EditVisualizationMode.cs" />
+    <Compile Include="InterfaceClasses\FireVisualizationMode.cs" />
+    <Compile Include="InterfaceClasses\VisualizationMode.cs" />
+    <Page Include="InterfaceElements\DesignButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Designer.xaml">
+    <Page Include="InterfaceElements\Designer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="InterfaceElements\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -78,13 +85,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DesignButton.xaml.cs">
+    <Compile Include="InterfaceElements\DesignButton.xaml.cs">
       <DependentUpon>DesignButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Designer.xaml.cs">
+    <Compile Include="InterfaceElements\Designer.xaml.cs">
       <DependentUpon>Designer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="InterfaceElements\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -122,9 +129,9 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LogicController\Controllers.csproj">
+    <ProjectReference Include="..\LogicController\ApplicationLogic.csproj">
       <Project>{a6747744-f239-418c-a176-7a7443431674}</Project>
-      <Name>Controllers</Name>
+      <Name>ApplicationLogic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shapes\Shapes.csproj">
       <Project>{6896f82e-a09b-4e65-878d-83c19129ec9a}</Project>

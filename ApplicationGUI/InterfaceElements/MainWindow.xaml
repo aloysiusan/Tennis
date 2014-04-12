@@ -301,8 +301,8 @@
 		</Grid>
 		<Border BorderBrush="#FF979797" BorderThickness="0,1,0,0" Height="44" VerticalAlignment="Bottom" Margin="220,0,1,0">
 			<Grid>
-				<RadioButton x:Name="rdbDrawArcade" Content="Pintar como Arcade" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top" Style="{DynamicResource radioButtonStyle}"/>
-				<RadioButton x:Name="rdbDrawFire" Content="Pintar como Fire" HorizontalAlignment="Left" Margin="150,13,0,0" VerticalAlignment="Top" IsChecked="True" Style="{DynamicResource radioButtonStyle}"/>
+				<RadioButton x:Name="rdbDrawArcade" Content="Pintar como Arcade" HorizontalAlignment="Left" Margin="136,13,0,0" VerticalAlignment="Top" Style="{DynamicResource radioButtonStyle}" Checked="rdbDrawArcade_Checked"/>
+				<RadioButton x:Name="rdbDrawFire" Content="Pintar como Fire" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top" IsChecked="True" Style="{DynamicResource radioButtonStyle}" Checked="rdbDrawFire_Checked"/>
 				<Button x:Name="btnSaveDesign" Content="Guardar" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="75" Background="#FF008AFF" Foreground="White" BorderBrush="#FF008AFF" Style="{DynamicResource btnStyle}" IsEnabled="False"/>
 				<Button x:Name="btnEditDesign" Content="Editar" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="75" Background="#FF008AFF" Foreground="White" BorderBrush="#FF008AFF" Style="{DynamicResource btnStyle}" IsEnabled="False"/>
 			</Grid>

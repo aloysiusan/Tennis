@@ -7,7 +7,7 @@
     <ProjectGuid>{A6747744-F239-418C-A176-7A7443431674}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tennis.Controllers</RootNamespace>
+    <RootNamespace>Tennis.ApplicationLogic</RootNamespace>
     <AssemblyName>Controllers</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -50,11 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppMainController.cs" />
-    <Compile Include="DataController.cs" />
+    <Compile Include="ApplicationController.cs" />
+    <Compile Include="ParseDataController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParseRow.cs" />
-    <Compile Include="ParseController.cs" />
+    <Compile Include="ParseDataAccess.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TDesign\TDesign.csproj">

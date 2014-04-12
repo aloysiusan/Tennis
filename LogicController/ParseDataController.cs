@@ -8,9 +8,9 @@ using Tennis.Parse.Controller;
 using Tennis.Parse.Rows;
 using Newtonsoft.Json;
 
-namespace Tennis.Controllers
+namespace Tennis.ApplicationLogic
 {
-    public class DataController
+    public class ParseDataController
     {
         //Event Handlers
         public event EventHandler<TennisEventArgs> designsFinishedDownloading_EventHandler;
@@ -18,26 +18,26 @@ namespace Tennis.Controllers
         public event EventHandler<TennisEventArgs> designLoadResponseRecieved_EventHandler;
         //*====================================*/
 
-        private static DataController instance;
+        private static ParseDataController instance;
 
-        private DataController() {
-            ParseController.Instance().designsDataFinishedDownloading_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignsMainDataRecieved);
-            ParseController.Instance().designCreationFailed_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationFailed);
-            ParseController.Instance().designLoadFinished_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignLoadFinished);
+        private ParseDataController() {
+            ParseDataAccess.Instance().designsDataFinishedDownloading_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignsMainDataRecieved);
+            ParseDataAccess.Instance().designCreationFailed_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationFailed);
+            ParseDataAccess.Instance().designLoadFinished_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignLoadFinished);
         }
 
-        public static DataController Instance()
+        public static ParseDataController Instance()
         {
             if (instance == null)
             {
-                instance = new DataController();
+                instance = new ParseDataController();
             }
             return instance;
         }
 
         public void requestAllDesignsMainData()
         {
-            ParseController.Instance().fetchAllDesignsMainInfo();
+            ParseDataAccess.Instance().fetchAllDesignsMainInfo();
         }
 
         public void OnDesignsMainDataRecieved(object sender, TennisEventArgs args)
@@ -53,7 +53,7 @@ namespace Tennis.Controllers
         public void createNewDesign(String pName)
         {
             String JSONDefualtData = "{\"pointA\":{\"id\":\"a\",\"globalXPositionPercent\":1.0,\"globalYPositionPercent\":2.0},\"pointB\":{\"id\":\"b\",\"globalXPositionPercent\":4.0,\"globalYPositionPercent\":1.0},\"pointC\":{\"id\":\"c\",\"globalXPositionPercent\":6.0,\"globalYPositionPercent\":5.0},\"pointD\":{\"id\":\"d\",\"globalXPositionPercent\":9.0,\"globalYPositionPercent\":9.0},\"pointE\":{\"id\":\"e\",\"globalXPositionPercent\":1.0,\"globalYPositionPercent\":9.0},\"designLines\":[{\"startPoint\":{\"id\":\"b\",\"globalXPositionPercent\":4.0,\"globalYPositionPercent\":1.0},\"endPoint\":{\"id\":\"c\",\"globalXPositionPercent\":6.0,\"globalYPositionPercent\":5.0},\"thickness\":1,\"color\":\"#000000\"},{\"startPoint\":{\"id\":\"c\",\"globalXPositionPercent\":6.0,\"globalYPositionPercent\":5.0},\"endPoint\":{\"id\":\"d\",\"globalXPositionPercent\":9.0,\"globalYPositionPercent\":9.0},\"thickness\":1,\"color\":\"#000000\"}],\"baseLine\":{\"startPoint\":{\"id\":\"e\",\"globalXPositionPercent\":1.0,\"globalYPositionPercent\":9.0},\"endPoint\":{\"id\":\"d\",\"globalXPositionPercent\":9.0,\"globalYPositionPercent\":9.0},\"thickness\":1,\"color\":\"#000000\"},\"designArcs\":[{\"angle\":0.0,\"startPoint\":{\"id\":\"e\",\"globalXPositionPercent\":1.0,\"globalYPositionPercent\":9.0},\"endPoint\":{\"id\":\"a\",\"globalXPositionPercent\":1.0,\"globalYPositionPercent\":2.0},\"thickness\":1,\"inverted\":false,\"color\":\"#000000\"},{\"angle\":0.0,\"startPoint\":{\"id\":\"a\",\"globalXPositionPercent\":1.0,\"globalYPositionPercent\":2.0},\"endPoint\":{\"id\":\"b\",\"globalXPositionPercent\":4.0,\"globalYPositionPercent\":1.0},\"thickness\":1,\"inverted\":true,\"color\":\"#000000\"}]}";
-            ParseController.Instance().sendDataForNewDesign(pName, JSONDefualtData);
+            ParseDataAccess.Instance().sendDataForNewDesign(pName, JSONDefualtData);
         }
 
         public void OnDesignCreationFailed(object sender, TennisEventArgs args)
@@ -67,7 +67,7 @@ namespace Tennis.Controllers
 
         public void requestDesignDataForID(String pID, bool pIsNew)
         {
-            ParseController.Instance().fetchDesignDataForID(pID, pIsNew);
+            ParseDataAccess.Instance().fetchDesignDataForID(pID, pIsNew);
         }
 
         public void OnDesignLoadFinished(object sender, TennisEventArgs args)

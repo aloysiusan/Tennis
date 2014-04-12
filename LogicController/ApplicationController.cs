@@ -7,55 +7,47 @@ using Tennis.TEventArgs;
 using Tennis.Design;
 using Tennis.Parse.Rows;
 
-namespace Tennis.Controllers
+namespace Tennis.ApplicationLogic
 {   
 
-    public class AppMainController
+    public class ApplicationController
     {
-        public enum VisualizationMode
-        {
-            Arcade, 
-            Fire, 
-            Edit
-        }
-
         //Event Handlers
         public event EventHandler<TennisEventArgs> designsReady_EventHandler;
         public event EventHandler<TennisEventArgs> designCreationStatusFailed_EventHandler;
         public event EventHandler<TennisEventArgs> designDataReady_EventHandler;
 
-        private static AppMainController instance;
-        public VisualizationMode selectedMode;
-        private object[] currentDesign;
+        private static ApplicationController instance;        
+        private object[] currentDesignData;
 
-        private AppMainController() {
-            DataController.Instance().designsFinishedDownloading_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignsRecieved);
-            DataController.Instance().designCreationResponseRecieved_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationResponseRecieved);
-            DataController.Instance().designLoadResponseRecieved_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignDataRecieved);
+        private ApplicationController() {
+            ParseDataController.Instance().designsFinishedDownloading_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignsRecieved);
+            ParseDataController.Instance().designCreationResponseRecieved_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationResponseRecieved);
+            ParseDataController.Instance().designLoadResponseRecieved_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignDataRecieved);
         }
 
-        public static AppMainController Instance()
+        public static ApplicationController Instance()
         {
             if (instance == null)
             {
-                instance = new AppMainController();
+                instance = new ApplicationController();
             }
             return instance;
         }
 
         public void setCurrentDesign(object[] pDesignData)
         {
-            currentDesign = pDesignData;            
+            currentDesignData = pDesignData;            
         }
 
         public TDesign getCurrentDesign()
-        {            
-            return (TDesign)currentDesign[3];
+        {
+            return (currentDesignData != null) ? (TDesign)currentDesignData[3] : null;
         }
 
         public void requestDesignsFromDataBase()
         {
-            DataController.Instance().requestAllDesignsMainData();
+            ParseDataController.Instance().requestAllDesignsMainData();
         }
 
         public void OnDesignsRecieved(object sender, TennisEventArgs args)
@@ -76,7 +68,7 @@ namespace Tennis.Controllers
 
         public void requestNewDesignCreation(String pName)
         {
-            DataController.Instance().createNewDesign(pName);
+            ParseDataController.Instance().createNewDesign(pName);
         }
 
         public void OnDesignCreationResponseRecieved(object sender, TennisEventArgs args)
@@ -90,7 +82,7 @@ namespace Tennis.Controllers
 
         public void requestDesignForID(String pID, bool pIsNew)
         {
-            DataController.Instance().requestDesignDataForID(pID, pIsNew);
+            ParseDataController.Instance().requestDesignDataForID(pID, pIsNew);
         }
 
         public void OnDesignDataRecieved(object sender, TennisEventArgs args)
@@ -100,7 +92,7 @@ namespace Tennis.Controllers
             {                
                 ParseRow currentDesignRow = (ParseRow)args.ParseObjectData;
                 args.DesignData = new object[4] { currentDesignRow.id, currentDesignRow.name, currentDesignRow.createdAt, currentDesignRow.data };
-                currentDesign = args.DesignData;                
+                currentDesignData = args.DesignData;                
                 handler(this, args);
             }
         }

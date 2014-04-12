@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Tennis.Controllers;
+using Tennis.ApplicationLogic;
 using Tennis.TEventArgs;
 using Tennis.Parse.Rows;
 
@@ -25,19 +25,27 @@ namespace Tennis.ApplicationGUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private enum Mode
+        {
+            FIRE, ARCADE
+        }
+
+        private Mode selectedMode;
+
         public MainWindow()
         {
             InitializeComponent();
-            
-            AppMainController.Instance().designsReady_EventHandler += new EventHandler<TennisEventArgs>(this.fillListWithDesigns);
-            AppMainController.Instance().designCreationStatusFailed_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationFailed);
-            AppMainController.Instance().designDataReady_EventHandler += new EventHandler<TennisEventArgs>(this.loadCurrentDesign);
+
+            selectedMode = Mode.FIRE;
+            ApplicationController.Instance().designsReady_EventHandler += new EventHandler<TennisEventArgs>(this.fillListWithDesigns);
+            ApplicationController.Instance().designCreationStatusFailed_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationFailed);
+            ApplicationController.Instance().designDataReady_EventHandler += new EventHandler<TennisEventArgs>(this.loadSelectedDesign);
         }
         
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
-            AppMainController.Instance().requestDesignsFromDataBase();
+            ApplicationController.Instance().requestDesignsFromDataBase();
         }
         
         private void btnNewDesign_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -60,12 +68,20 @@ namespace Tennis.ApplicationGUI
             if (e.Key == Key.Enter && txtNewName.Text != "")
             {
                 Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
-                AppMainController.Instance().requestNewDesignCreation(txtNewName.Text);
+                ApplicationController.Instance().requestNewDesignCreation(txtNewName.Text);
                 insertNameMessageView.Visibility = Visibility.Hidden;
                 txtNewName.Clear();
                 btnNewDesign.IsEnabled = false;
             }
         }
+
+        public void drawDesignUsingMode(VisualizationMode pMode)
+        {
+            designerView.root.Children.Clear();
+            designerView.BorderThickness = new Thickness(1);
+
+            pMode.beginDrawingDesign();
+        } 
 
         private void lineThicknessSld_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -99,18 +115,19 @@ namespace Tennis.ApplicationGUI
         private void OnDesignItemSelected(object sender, TennisEventArgs args)
         {
             if (args.IsNewDesign)
-            {
-                AppMainController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
-                Dispatcher.BeginInvoke(new Action(() => designerView.drawDesign(AppMainController.Instance().getCurrentDesign())));
+            {                
+                ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
+                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(EditVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(),designerView))));
             }
             else
             {
                 Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
-                AppMainController.Instance().requestDesignForID(args.SelectedDesignID, false);
+                ApplicationController.Instance().requestDesignForID(args.SelectedDesignID, false);
             }
         }
 
-        private void loadCurrentDesign(object sender, TennisEventArgs args)
+               
+        private void loadSelectedDesign(object sender, TennisEventArgs args)
         {            
             Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
@@ -123,11 +140,37 @@ namespace Tennis.ApplicationGUI
             }
             else
             {                
-                AppMainController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
-                Dispatcher.BeginInvoke(new Action(() => designerView.drawDesign(AppMainController.Instance().getCurrentDesign())));
+                ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
+                if(selectedMode == Mode.FIRE)
+                    Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(FireVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));                
+                else
+                    Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(ArcadeVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));
+
                 Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
+
+
                 //var dump = ObjectDumper.Dump(AppMainController.Instance().getCurrentDesign());
                 //.Write(dump);
+            }
+        }
+
+        private void rdbDrawFire_Checked(object sender, RoutedEventArgs e)
+        {
+            selectedMode = Mode.FIRE;
+            if (ApplicationController.Instance().getCurrentDesign() != null)
+            {
+                ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
+                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(FireVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));
+            }
+        }
+
+        private void rdbDrawArcade_Checked(object sender, RoutedEventArgs e)
+        {
+            selectedMode = Mode.ARCADE;
+            if (ApplicationController.Instance().getCurrentDesign() != null)
+            {
+                ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
+                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(ArcadeVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));
             }
         }
     }

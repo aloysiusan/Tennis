@@ -9,7 +9,7 @@ using Tennis.TEventArgs;
 
 namespace Tennis.Parse.Controller
 {
-    public class ParseController
+    public class ParseDataAccess
     {
         //Event Handlers
         public event EventHandler<TennisEventArgs> designsDataFinishedDownloading_EventHandler;
@@ -17,14 +17,14 @@ namespace Tennis.Parse.Controller
         public event EventHandler<TennisEventArgs> designLoadFinished_EventHandler;
         /*========================*/
 
-        private static ParseController instance;
-        private ParseController() { }
+        private static ParseDataAccess instance;
+        private ParseDataAccess() { }
 
-        public static ParseController Instance()
+        public static ParseDataAccess Instance()
         {
             if (instance == null)
             {
-                instance = new ParseController();
+                instance = new ParseDataAccess();
             }
             return instance;
         }
