@@ -26,6 +26,11 @@ namespace Tennis.ApplicationGUI
 		public Designer()
 		{
             this.InitializeComponent();
-		}               
+		}
+
+        public void AddShape(UIElement pShape)
+        {
+            this.root.Children.Add(pShape);
+        }
 	}
 }

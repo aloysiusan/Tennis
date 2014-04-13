@@ -20,6 +20,7 @@ namespace Tennis.ApplicationGUI
 	public partial class DesignButton : UserControl
 	{
         public event EventHandler<TennisEventArgs> designButtonSelected_EventHandler;
+        public event EventHandler<TennisEventArgs> designButtonPreviewSelected_EventHandler;
 
         private String _ID;
         private bool isSelected;
@@ -77,10 +78,11 @@ namespace Tennis.ApplicationGUI
         private void UserControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {            
             ((DesignButton)sender).setSelected(false);
-        }        
+        }
 
         public String getName(){
             return lblName.Content.ToString();
         }
+
 	}
 }

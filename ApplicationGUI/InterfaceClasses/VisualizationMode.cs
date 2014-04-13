@@ -13,7 +13,7 @@ namespace Tennis.ApplicationGUI
 
         public abstract void beginDrawingDesign();
         protected abstract void drawBorderLines(TLine[] pLines);
-        protected abstract void drawBaseLine(TLine pLine);
+        protected abstract void drawLine(TLine pLine);
         protected abstract void drawBorderArcs(TArc[] pArcs);
 
     }

@@ -50,7 +50,7 @@ namespace Tennis.ApplicationGUI
         {
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
-            this.drawBaseLine(currentDesign.baseLine);
+            this.drawLine(currentDesign.baseLine);
 
             this.drawPoint(currentDesign.getPointWithID('a'));
             this.drawPoint(currentDesign.getPointWithID('b'));
@@ -73,38 +73,30 @@ namespace Tennis.ApplicationGUI
             guiPoint.MouseMove += Point_MouseMove;
             guiPoint.MouseLeftButtonDown += Point_MouseLeftButtonDown;
 
-            Canvas.SetLeft(guiPoint, pPoint.getXPosition());
-            Canvas.SetTop(guiPoint, pPoint.getYPosition());
-            mainDesigner.root.Children.Add(guiPoint);
+            Canvas.SetLeft(guiPoint, pPoint.XPosition);
+            Canvas.SetTop(guiPoint, pPoint.YPosition);
+            mainDesigner.AddShape(guiPoint);
         }
 
         protected override void drawBorderLines(TLine[] pLines)
         {
             foreach (TLine line in pLines)
             {
-                Line guiLine = new Line();
-                guiLine.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(line.color));
-                guiLine.X1 = line.startPoint.getXPosition() + TLine.POSITION_OFFSET;
-                guiLine.X2 = line.endPoint.getXPosition() + TLine.POSITION_OFFSET;
-                guiLine.Y1 = line.startPoint.getYPosition() + TLine.POSITION_OFFSET;
-                guiLine.Y2 = line.endPoint.getYPosition() + TLine.POSITION_OFFSET;
-                guiLine.StrokeThickness = line.thickness;
-
-                mainDesigner.root.Children.Add(guiLine);
+                drawLine(line);
             }
         }
 
-        protected override void drawBaseLine(TLine pLine)
+        protected override void drawLine(TLine pLine)
         {
-            Line baseLine = new Line();
-            baseLine.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.color));
-            baseLine.X1 = pLine.startPoint.getXPosition() + TLine.POSITION_OFFSET;
-            baseLine.X2 = pLine.endPoint.getXPosition() + TLine.POSITION_OFFSET;
-            baseLine.Y1 = pLine.startPoint.getYPosition() + TLine.POSITION_OFFSET;
-            baseLine.Y2 = pLine.endPoint.getYPosition() + TLine.POSITION_OFFSET;
-            baseLine.StrokeThickness = pLine.thickness;
+            Line line = new Line();
+            line.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.color));
+            line.X1 = pLine.startPoint.XPosition + TLine.POSITION_OFFSET;
+            line.X2 = pLine.endPoint.XPosition + TLine.POSITION_OFFSET;
+            line.Y1 = pLine.startPoint.YPosition + TLine.POSITION_OFFSET;
+            line.Y2 = pLine.endPoint.YPosition + TLine.POSITION_OFFSET;
+            line.StrokeThickness = pLine.thickness;
 
-            mainDesigner.root.Children.Add(baseLine);
+            mainDesigner.AddShape(line);
         }
 
         protected override void drawBorderArcs(TArc[] pArcs)
@@ -113,15 +105,15 @@ namespace Tennis.ApplicationGUI
             {
                 PathGeometry pathGeometry = new PathGeometry();
                 PathFigure figure = new PathFigure();
-                figure.StartPoint = new Point(arc.startPoint.getXPosition() + TArc.POSITION_OFFSET, arc.startPoint.getYPosition() + TArc.POSITION_OFFSET);
+                figure.StartPoint = new Point(arc.startPoint.XPosition + TArc.POSITION_OFFSET, arc.startPoint.YPosition + TArc.POSITION_OFFSET);
                 SweepDirection direction = !(arc.inverted) ? SweepDirection.Clockwise : SweepDirection.Counterclockwise;
-                figure.Segments.Add(new ArcSegment(new Point(arc.endPoint.getXPosition() + TArc.POSITION_OFFSET, arc.endPoint.getYPosition() + TArc.POSITION_OFFSET), new Size(100, 100), 0, false, direction, true));
+                figure.Segments.Add(new ArcSegment(new Point(arc.endPoint.XPosition + TArc.POSITION_OFFSET, arc.endPoint.YPosition + TArc.POSITION_OFFSET), new Size(100, 100), 0, false, direction, true));
                 pathGeometry.Figures.Add(figure);
                 Path path = new Path();
                 path.Data = pathGeometry;
                 path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc.color));
                 path.StrokeThickness = arc.thickness;
-                mainDesigner.root.Children.Add(path);
+                mainDesigner.AddShape(path);
             }
         }
 

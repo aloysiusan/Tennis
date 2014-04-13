@@ -31,6 +31,7 @@ namespace Tennis.ApplicationGUI
         }
 
         private Mode selectedMode;
+        private bool isEditing;
 
         public MainWindow()
         {
@@ -45,6 +46,7 @@ namespace Tennis.ApplicationGUI
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
+            Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = true));
             ApplicationController.Instance().requestDesignsFromDataBase();
         }
         
@@ -68,6 +70,7 @@ namespace Tennis.ApplicationGUI
             if (e.Key == Key.Enter && txtNewName.Text != "")
             {
                 Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
+                Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = true));
                 ApplicationController.Instance().requestNewDesignCreation(txtNewName.Text);
                 insertNameMessageView.Visibility = Visibility.Hidden;
                 txtNewName.Clear();
@@ -90,6 +93,7 @@ namespace Tennis.ApplicationGUI
 
         private void fillListWithDesigns(object sender, TennisEventArgs args) {
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
+            Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
             if (args.FinishedSuccessfully)
             {                
                 foreach (string[] obj in args.DesignsList)
@@ -122,6 +126,7 @@ namespace Tennis.ApplicationGUI
             else
             {
                 Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
+                Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = true));
                 ApplicationController.Instance().requestDesignForID(args.SelectedDesignID, false);
             }
         }
@@ -131,6 +136,7 @@ namespace Tennis.ApplicationGUI
         {            
             Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
+            Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
 
             if (args.FinishedSuccessfully && args.IsNewDesign)
             {
@@ -141,13 +147,13 @@ namespace Tennis.ApplicationGUI
             else
             {                
                 ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
-                if(selectedMode == Mode.FIRE)
+                if(selectedMode == Mode.FIRE) 
                     Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(FireVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));                
                 else
                     Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(ArcadeVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));
 
                 Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
-
+                Dispatcher.BeginInvoke(new Action(() => btnEditDesign.IsEnabled = true));
 
                 //var dump = ObjectDumper.Dump(AppMainController.Instance().getCurrentDesign());
                 //.Write(dump);
@@ -160,7 +166,7 @@ namespace Tennis.ApplicationGUI
             if (ApplicationController.Instance().getCurrentDesign() != null)
             {
                 ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
-                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(FireVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));
+                this.drawDesignUsingMode(FireVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView));
             }
         }
 
@@ -170,8 +176,24 @@ namespace Tennis.ApplicationGUI
             if (ApplicationController.Instance().getCurrentDesign() != null)
             {
                 ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
-                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(ArcadeVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));
+                this.drawDesignUsingMode(ArcadeVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView));
             }
+        }
+
+        private void btnSaveDesign_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            isEditing = false;
+            btnSaveDesign.IsEnabled = false;
+            btnEditDesign.IsEnabled = true;
+            btnSaveDesign.Visibility = Visibility.Hidden;
+        }
+
+        private void btnEditDesign_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            isEditing = true;
+            btnSaveDesign.IsEnabled = true;
+            btnEditDesign.IsEnabled = false;
+            btnSaveDesign.Visibility = Visibility.Visible;
         }
     }
 }

@@ -40,15 +40,6 @@ namespace Tennis.Shapes{
 
         }
 
-        public double getXPosition(){
-            return XPosition;
-        }
-
-        public double getYPosition()
-        {
-            return YPosition;
-        }
-
         public void setXPositionRelative(double pPosition,double relativeWidth){
             XPosition = pPosition;
             globalXPositionPercent = 10 * (pPosition - POSITION_OFFSET) / relativeWidth;
