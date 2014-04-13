@@ -6,7 +6,7 @@
 	mc:Ignorable="d"
 	x:Class="Tennis.ApplicationGUI.DesignButton"
 	x:Name="UserControl"
-	d:DesignWidth="640" d:DesignHeight="480" Width="220" Height="57" MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
+	d:DesignWidth="640" d:DesignHeight="480" Width="220" Height="57" MouseLeftButtonUp="UserControl_MouseLeftButtonUp" IsEnabledChanged="UserControl_IsEnabledChanged">
 
 	<Grid x:Name="LayoutRoot">
 		<Border BorderBrush="#FF979797" BorderThickness="0,0,0,1" HorizontalAlignment="Left" Height="57" VerticalAlignment="Top" Width="220">

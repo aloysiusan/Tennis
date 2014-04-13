@@ -18,7 +18,9 @@ namespace Tennis.Shapes{
             DefaultPointB_YPosition = 1,
             DefaultPointC_YPosition = 5,
             DefaultPointD_YPosition = 9,
-            DefaultPointE_YPosition = 9
+            DefaultPointE_YPosition = 9,
+            DefaultGeneric_XPosition = 0,
+            DefaultGeneric_YPosition = 0
         }
 
         public char id;
@@ -30,6 +32,7 @@ namespace Tennis.Shapes{
         private readonly int POSITION_OFFSET = 2; /* RADIUS / 2 */
         public static readonly String COLOR = "#FF0000";
 
+        
         public TPoint(char pID, double pDesignerWidth, double pDesignerHeight, DefaultPosition pDefaultPositionX, DefaultPosition pDefaultPositionY)
         {
             id = pID;
@@ -38,6 +41,17 @@ namespace Tennis.Shapes{
             globalXPositionPercent = (double)pDefaultPositionX;
             globalYPositionPercent = (double)pDefaultPositionY;
 
+        }
+
+        public void loadCustomPointData(double pDesignerWidth, double pDesignerHeight, double pXPosition, double pYPosition)
+        {
+            if (id == 'l')
+            {
+                XPosition = pXPosition;
+                YPosition = pYPosition;
+                globalXPositionPercent = pXPosition * 10 / pDesignerWidth;
+                globalYPositionPercent = pYPosition * 10 / pDesignerHeight;
+            }
         }
 
         public void setXPositionRelative(double pPosition,double relativeWidth){

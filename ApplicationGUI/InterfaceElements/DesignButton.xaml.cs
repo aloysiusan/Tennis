@@ -20,7 +20,6 @@ namespace Tennis.ApplicationGUI
 	public partial class DesignButton : UserControl
 	{
         public event EventHandler<TennisEventArgs> designButtonSelected_EventHandler;
-        public event EventHandler<TennisEventArgs> designButtonPreviewSelected_EventHandler;
 
         private String _ID;
         private bool isSelected;
@@ -82,6 +81,24 @@ namespace Tennis.ApplicationGUI
 
         public String getName(){
             return lblName.Content.ToString();
+        }
+
+        private void UserControl_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue == false)
+            {
+                if (this.isSelected)
+                {
+                    this.LayoutRoot.Background = Brushes.LightGray;
+                }
+            }
+            else
+            {
+                if (this.isSelected)
+                {
+                    this.LayoutRoot.Background = THEME_BLUE;
+                }
+            }
         }
 
 	}

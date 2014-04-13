@@ -15,6 +15,6 @@ namespace Tennis.ApplicationGUI
         protected abstract void drawBorderLines(TLine[] pLines);
         protected abstract void drawLine(TLine pLine);
         protected abstract void drawBorderArcs(TArc[] pArcs);
-
+        protected abstract void drawCustomLines(List<TLine> pLines);
     }
 }

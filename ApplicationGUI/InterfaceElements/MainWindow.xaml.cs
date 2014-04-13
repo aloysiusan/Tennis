@@ -30,8 +30,7 @@ namespace Tennis.ApplicationGUI
             FIRE, ARCADE
         }
 
-        private Mode selectedMode;
-        private bool isEditing;
+        private Mode selectedMode;        
 
         public MainWindow()
         {
@@ -85,12 +84,7 @@ namespace Tennis.ApplicationGUI
 
             pMode.beginDrawingDesign();
         } 
-
-        private void lineThicknessSld_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-           
-        }
-
+        
         private void fillListWithDesigns(object sender, TennisEventArgs args) {
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
@@ -121,7 +115,7 @@ namespace Tennis.ApplicationGUI
             if (args.IsNewDesign)
             {                
                 ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
-                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(EditVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(),designerView))));
+                Dispatcher.BeginInvoke(new Action(() => beginEditingMode()));
             }
             else
             {
@@ -182,18 +176,112 @@ namespace Tennis.ApplicationGUI
 
         private void btnSaveDesign_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            isEditing = false;
-            btnSaveDesign.IsEnabled = false;
-            btnEditDesign.IsEnabled = true;
-            btnSaveDesign.Visibility = Visibility.Hidden;
+            beginViewMode();
         }
 
         private void btnEditDesign_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            isEditing = true;
+            beginEditingMode();
+        }
+
+        public void beginEditingMode()
+        {
             btnSaveDesign.IsEnabled = true;
             btnEditDesign.IsEnabled = false;
             btnSaveDesign.Visibility = Visibility.Visible;
+            settingsView.Width = 220;
+            settingsView.IsEnabled = true;
+            rdbDrawArcade.IsEnabled = false;
+            rdbDrawFire.IsEnabled = false;
+            designerContainer.Margin = new Thickness(220, 0, 220, 0);
+            desingsList.IsEnabled = false;
+            btnNewDesign.IsEnabled = false;
+            ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
+            this.drawDesignUsingMode(EditVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView));
         }
+
+        public void beginViewMode()
+        {
+            btnSaveDesign.IsEnabled = false;
+            btnEditDesign.IsEnabled = true;
+            btnSaveDesign.Visibility = Visibility.Hidden;
+            settingsView.Width = 0;
+            settingsView.IsEnabled = false;
+            designerContainer.Margin = new Thickness(220, 0, 0, 0);
+            rdbDrawArcade.IsEnabled = true;
+            rdbDrawFire.IsEnabled = true;
+            desingsList.IsEnabled = true;
+            btnNewDesign.IsEnabled = true;
+            ApplicationController.Instance().saveCurrentDesign();
+            ApplicationController.Instance().getCurrentDesign().adjustPoints(this.designerView.ActualWidth, this.designerView.ActualHeight);
+            chkDrawLines.IsChecked = false;
+            if (selectedMode == Mode.FIRE)
+                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(FireVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));
+            else
+                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(ArcadeVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView))));
+
+        }
+
+        private void lineThicknessSld_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            try{ 
+                lineThicknessLbl.Content = ((int)e.NewValue).ToString() + "px";
+                EditVisualizationMode.Instance().newLinesThickness = (int)e.NewValue;
+            }
+            catch (NullReferenceException) { }            
+        }
+
+        private void sldBorderThickness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            try{ 
+                lblBorderThickness.Content = ((int)e.NewValue).ToString() + "px";
+                ApplicationController.Instance().getCurrentDesign().setBorderThickness((int)e.NewValue);
+                this.drawDesignUsingMode(EditVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView));
+            }
+            catch (NullReferenceException) { }            
+        }
+
+        private void sldBaseLineThickness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            try
+            {
+                lblBaseLineThickness.Content = ((int)e.NewValue).ToString() + "px";
+                ApplicationController.Instance().getCurrentDesign().setBaseLineThickness((int)e.NewValue);
+                this.drawDesignUsingMode(EditVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView));
+            }
+            catch (NullReferenceException) { }    
+        }
+
+        private void borderColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            ApplicationController.Instance().getCurrentDesign().setBorderColor("#" + e.NewValue.R.ToString("X2") + e.NewValue.G.ToString("X2") + e.NewValue.B.ToString("X2"));
+            this.drawDesignUsingMode(EditVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView));
+        }
+
+        private void baseLineColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            ApplicationController.Instance().getCurrentDesign().setBaseLineColor("#" + e.NewValue.R.ToString("X2") + e.NewValue.G.ToString("X2") + e.NewValue.B.ToString("X2"));
+            this.drawDesignUsingMode(EditVisualizationMode.createSingleInstance(ApplicationController.Instance().getCurrentDesign(), designerView));
+        }
+        
+        private void lineColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            EditVisualizationMode.Instance().newLinesColor = "#" + e.NewValue.R.ToString("X2") + e.NewValue.G.ToString("X2") + e.NewValue.B.ToString("X2");
+        }   
+
+        private void chkDrawLines_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            designerView.Cursor = Cursors.Hand;
+            EditVisualizationMode.Instance().isDrawingLines = true;
+            EditVisualizationMode.Instance().newLinesColor = "#" + lineColorPicker.SelectedColor.R.ToString("X2") + lineColorPicker.SelectedColor.G.ToString("X2") + lineColorPicker.SelectedColor.B.ToString("X2");
+            EditVisualizationMode.Instance().newLinesThickness = (int)lineThicknessSld.Value;
+        }
+        
+        private void chkDrawLines_Unchecked(object sender, RoutedEventArgs e)
+        {
+            designerView.Cursor = Cursors.Arrow;
+            EditVisualizationMode.Instance().isDrawingLines = false;
+        }   
+
     }
 }

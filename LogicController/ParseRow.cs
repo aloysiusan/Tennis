@@ -11,14 +11,14 @@ namespace Tennis.Parse.Rows
     {
         public string id;
         public string name;
-        public string createdAt;
+        public string updatedAt;
         public TDesign data;
 
         public ParseRow(string pID, string pName, string pCreatedAt, TDesign pData)
         {
             id = pID;
             name = pName;
-            createdAt = pCreatedAt;
+            updatedAt = pCreatedAt;
             data = pData;
         }
     }

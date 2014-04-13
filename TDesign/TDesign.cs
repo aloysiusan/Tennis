@@ -31,6 +31,8 @@ namespace Tennis.Design
         public TPoint pointE;
 
         public TLine[] designLines;
+        public List<TLine> customLines;
+
         public TLine baseLine; //Suela
         public TArc[] designArcs;       
         
@@ -45,6 +47,7 @@ namespace Tennis.Design
 
             designLines = new TLine[2];
             designArcs = new  TArc[2];
+            customLines = new List<TLine>();
 
             designLines[0] = new TLine(pointB, pointC);
             designLines[1] = new TLine(pointC, pointD);
@@ -74,16 +77,32 @@ namespace Tennis.Design
             }
         }
 
-        /*public void createLine(TPoint pStartPoint, TPoint pEndPoint){
-            TLine line = new TLine(pStartPoint, pEndPoint);
-            designLines.Add(line);
+        public void setBorderThickness(int pValue)
+        {
+            designLines[0].thickness = pValue;
+            designLines[1].thickness = pValue;
+            designArcs[0].thickness = pValue;
+            designArcs[1].thickness = pValue;
         }
 
-        public void createArc(TPoint pStartPoint, TPoint pEndPoint, bool pIsInverted) {
-            TArc arc = new TArc(pStartPoint, pEndPoint, pIsInverted);
-            designArcs.Add(arc);
+        public void setBorderColor(String pColorValue)
+        {
+            designLines[0].color = pColorValue;
+            designLines[1].color = pColorValue;
+            designArcs[0].color = pColorValue;
+            designArcs[1].color = pColorValue;
         }
-        */
+
+        public void setBaseLineThickness(int pValue)
+        {
+            baseLine.thickness = pValue;
+        }
+
+        public void setBaseLineColor(String pColorValue)
+        {
+            baseLine.color = pColorValue;
+        }
+
         public void adjustPoints(double pRelativeWidth, double pRelativeHeight)
         {
             pointA.adjustPosition(pRelativeWidth, pRelativeHeight);

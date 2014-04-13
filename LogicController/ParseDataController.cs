@@ -80,5 +80,11 @@ namespace Tennis.ApplicationLogic
                 handler(this, args);
             }
         }
+
+        public void prepareDesignForSaving(object pDesign, String pDesignId)
+        {
+            String designJson = JsonConvert.SerializeObject(pDesign);
+            ParseDataAccess.Instance().saveDesign(designJson, pDesignId);
+        }
     }
 }

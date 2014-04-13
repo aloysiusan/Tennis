@@ -45,13 +45,16 @@ namespace Tennis.ApplicationGUI
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
             this.drawLine(currentDesign.baseLine);
+            this.drawCustomLines(currentDesign.customLines);
         }
+
         protected override void drawBorderLines(TLine[] pLines) {
             foreach (TLine tline in pLines)
             {
                 drawLine(tline);
             }
         }
+
         protected override void drawLine(TLine pLine) {
             LineGeometry line = new LineGeometry();
             line.StartPoint = new Point(pLine.startPoint.XPosition + TLine.POSITION_OFFSET, pLine.startPoint.YPosition + TLine.POSITION_OFFSET);
@@ -64,6 +67,7 @@ namespace Tennis.ApplicationGUI
             path.Data = line;
             mainDesigner.AddShape(path);
         }
+
         protected override void drawBorderArcs(TArc[] pArcs) {
             foreach (TArc arc in pArcs)
             {
@@ -78,6 +82,14 @@ namespace Tennis.ApplicationGUI
                 path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc.color));
                 path.StrokeThickness = arc.thickness;
                 mainDesigner.AddShape(path);
+            }
+        }
+
+        protected override void drawCustomLines(List<TLine> pLines)
+        {
+            foreach (TLine line in pLines)
+            {
+                drawLine(line);
             }
         }
     }

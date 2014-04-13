@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using Tennis.Design;
 using Tennis.Shapes;
 
+
 namespace Tennis.ApplicationGUI
 {
     public class EditVisualizationMode : VisualizationMode
@@ -21,6 +22,10 @@ namespace Tennis.ApplicationGUI
         private double _OffsetTop;
         private double _OffsetLeft;
         private bool _IsDragging;
+
+        public bool isDrawingLines;
+        public int newLinesThickness;
+        public string newLinesColor;
 
         private static EditVisualizationMode _currentInstance;
 
@@ -44,6 +49,9 @@ namespace Tennis.ApplicationGUI
         private EditVisualizationMode(TDesign pDesign, Designer pSender) {
             currentDesign = pDesign;
             mainDesigner = pSender;
+            mainDesigner.MouseLeftButtonDown += mainDesigner_MouseLeftButtonDown;
+            mainDesigner.MouseLeftButtonUp +=mainDesigner_MouseLeftButtonUp;
+            mainDesigner.MouseMove +=mainDesigner_MouseMove;
         }
 
         public override void beginDrawingDesign()
@@ -51,6 +59,7 @@ namespace Tennis.ApplicationGUI
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
             this.drawLine(currentDesign.baseLine);
+            this.drawCustomLines(currentDesign.customLines);
 
             this.drawPoint(currentDesign.getPointWithID('a'));
             this.drawPoint(currentDesign.getPointWithID('b'));
@@ -69,7 +78,7 @@ namespace Tennis.ApplicationGUI
             guiPoint.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.COLOR));
             guiPoint.StrokeThickness = 1;
 
-            guiPoint.PreviewMouseLeftButtonUp += Point_MouseLeftButtonUp;
+            guiPoint.MouseLeftButtonUp += Point_MouseLeftButtonUp;
             guiPoint.MouseMove += Point_MouseMove;
             guiPoint.MouseLeftButtonDown += Point_MouseLeftButtonDown;
 
@@ -114,6 +123,14 @@ namespace Tennis.ApplicationGUI
                 path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc.color));
                 path.StrokeThickness = arc.thickness;
                 mainDesigner.AddShape(path);
+            }
+        }
+
+        protected override void drawCustomLines(List<TLine> pLines)
+        {
+            foreach (TLine line in pLines)
+            {
+                drawLine(line);
             }
         }
 
@@ -166,6 +183,53 @@ namespace Tennis.ApplicationGUI
                 _OffsetLeft = Canvas.GetLeft(selectedPoint) - p.X;
                 Canvas.SetZIndex(selectedPoint, 5);
                 selectedPoint = null;
+            }
+        }
+
+        Line newLine;
+        private void mainDesigner_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (isDrawingLines)
+            {
+                _IsDragging = true;
+                newLine = new Line();
+                newLine.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(newLinesColor));
+                Point p = e.GetPosition(mainDesigner);
+                _OffsetTop = p.Y;
+                _OffsetLeft = p.X;
+                newLine.X1 = newLine.X2 = _OffsetLeft;
+                newLine.Y1 = newLine.Y2 = _OffsetTop;
+                newLine.StrokeThickness = newLinesThickness;
+                mainDesigner.AddShape(newLine);
+            }
+        }
+
+        private void mainDesigner_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (isDrawingLines && _IsDragging)
+            {
+                _IsDragging = false;
+                TPoint startPoint = new TPoint('l', mainDesigner.ActualWidth, mainDesigner.ActualHeight, TPoint.DefaultPosition.DefaultGeneric_XPosition, TPoint.DefaultPosition.DefaultGeneric_YPosition);
+                startPoint.loadCustomPointData(mainDesigner.ActualWidth, mainDesigner.ActualHeight, newLine.X1, newLine.Y1);
+
+                TPoint endPoint = new TPoint('l', mainDesigner.ActualWidth, mainDesigner.ActualHeight, TPoint.DefaultPosition.DefaultGeneric_XPosition, TPoint.DefaultPosition.DefaultGeneric_YPosition);
+                endPoint.loadCustomPointData(mainDesigner.ActualWidth, mainDesigner.ActualHeight, newLine.X2, newLine.Y2);
+
+                TLine newTLine = new TLine(startPoint, endPoint);
+                newTLine.color = newLinesColor;
+                newTLine.thickness = newLinesThickness;
+                currentDesign.customLines.Add(newTLine);
+                newLine = null;
+            }
+        }
+
+        private void mainDesigner_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDrawingLines && _IsDragging)
+            {
+                Point p = e.GetPosition(mainDesigner);
+                newLine.X2 = p.X;
+                newLine.Y2 = p.Y;
             }
         }
     }

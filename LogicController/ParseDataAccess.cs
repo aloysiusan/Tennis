@@ -33,14 +33,14 @@ namespace Tennis.Parse.Controller
         {
             String jsonResponse = "[";
             var query = ParseObject.GetQuery("Designs");
-            await query.FindAsync().ContinueWith(t =>
+            await query.OrderBy("name").FindAsync().ContinueWith(t =>
             {
                 bool success = true;
                 try
                 {
                     IEnumerable<ParseObject> results = t.Result;
                     foreach (var obj in results){
-                        jsonResponse += "{\"id\":\"" + (string)obj.ObjectId + "\", \"name\":\"" + obj.Get<string>("name") + "\",\"createdAt\":\"" + obj.CreatedAt.ToString() + "\",\"data\":null},";                        
+                        jsonResponse += "{\"id\":\"" + (string)obj.ObjectId + "\", \"name\":\"" + obj.Get<string>("name") + "\",\"updatedAt\":\"" + ((DateTime)obj.UpdatedAt).ToLocalTime().ToString() + "\",\"data\":null},";                        
                     }
                     jsonResponse += "]";
                     Console.WriteLine(jsonResponse);
@@ -73,7 +73,7 @@ namespace Tennis.Parse.Controller
                 {                    
                     var query = ParseObject.GetQuery("Designs");
 
-                    query.OrderByDescending("createdAt").FirstAsync().ContinueWith(t2 => {
+                    query.OrderByDescending("updatedAt").FirstAsync().ContinueWith(t2 => {
                         ParseObject result = t2.Result;
                         this.fetchDesignDataForID((string)result.ObjectId, true);                               
                     });
@@ -99,9 +99,9 @@ namespace Tennis.Parse.Controller
                 ParseObject result = t.Result;
                 String id = (string)result.ObjectId;
                 String name = result.Get<string>("name");
-                String createdAt = result.CreatedAt.ToString();
+                String updatedAt = result.UpdatedAt.ToString();
                 String data = result.Get<string>("data");
-                responseJson = "{\"id\":\"" + id + "\",\"name\":\"" + name + "\",\"createdAt\":\"" + createdAt + "\",\"data\":" + data + "}";
+                responseJson = "{\"id\":\"" + id + "\",\"name\":\"" + name + "\",\"updatedAt\":\"" + updatedAt + "\",\"data\":" + data + "}";
             }) ;
 
             EventHandler<TennisEventArgs> handler = designLoadFinished_EventHandler;
@@ -113,6 +113,15 @@ namespace Tennis.Parse.Controller
                 args.FinishedSuccessfully = true;
                 handler(this, args);
             }
+        }
+
+
+        public async void saveDesign(String pDesignData, String pDesignId)
+        {
+            ParseQuery<ParseObject> query = ParseObject.GetQuery("Designs");
+            ParseObject design = await query.GetAsync(pDesignId);
+            design["data"] = pDesignData;
+            await design.SaveAsync();
         }
     }
 }

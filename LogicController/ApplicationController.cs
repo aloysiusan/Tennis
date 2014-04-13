@@ -59,7 +59,7 @@ namespace Tennis.ApplicationLogic
                 List<Object> formatedList = new List<object>();
                 for (int i = 0; i < designsList.Length;i++)
                 {
-                    formatedList.Add(new string[] { designsList[i].id, designsList[i].name, designsList[i].createdAt});
+                    formatedList.Add(new string[] { designsList[i].id, designsList[i].name, designsList[i].updatedAt});
                 }
                 args.DesignsList = formatedList;
                 handler(this, args);
@@ -91,10 +91,15 @@ namespace Tennis.ApplicationLogic
             if (handler != null)
             {                
                 ParseRow currentDesignRow = (ParseRow)args.ParseObjectData;
-                args.DesignData = new object[4] { currentDesignRow.id, currentDesignRow.name, currentDesignRow.createdAt, currentDesignRow.data };
+                args.DesignData = new object[4] { currentDesignRow.id, currentDesignRow.name, currentDesignRow.updatedAt, currentDesignRow.data };
                 currentDesignData = args.DesignData;                
                 handler(this, args);
             }
+        }
+
+        public void saveCurrentDesign()
+        {
+            ParseDataController.Instance().prepareDesignForSaving(currentDesignData[3],(string)currentDesignData[0]);
         }
     }
 }
