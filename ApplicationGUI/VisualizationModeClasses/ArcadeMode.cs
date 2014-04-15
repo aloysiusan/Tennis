@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,46 +9,61 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Tennis.Design;
 using Tennis.Shapes;
+using Tennis.TEventArgs;
 
 namespace Tennis.ApplicationGUI
 {
-    class FireVisualizationMode : VisualizationMode
+    class ArcadeMode : VisualizationMode
     {
         private TDesign currentDesign;
         private Designer mainDesigner;
-        private static FireVisualizationMode _currentInstance;
+        private static ArcadeMode _currentInstance;
+        private Stopwatch Watcher;
 
-        public static FireVisualizationMode Instance()
+        public event EventHandler<TennisEventArgs> finishDrawingDesign_EventHandler;
+
+        public static ArcadeMode Instance()
         {
             return _currentInstance;
         }
 
-        public static FireVisualizationMode createSingleInstance(TDesign pDesign, Designer pSender)
+        public static ArcadeMode createInstance(TDesign pDesign, Designer pDesigner)
         {
-            destroyCurrentInstance();
-            _currentInstance = new FireVisualizationMode(pDesign, pSender);
+            _currentInstance = new ArcadeMode(pDesign, pDesigner);
             return _currentInstance;
         }
 
-        private static void destroyCurrentInstance()
-        {
-            _currentInstance = null;
-        }
 
-        private FireVisualizationMode(TDesign pDesign, Designer pSender) {
+        private ArcadeMode(TDesign pDesign, Designer pDesigner)
+        {
             currentDesign = pDesign;
-            mainDesigner = pSender;
+            mainDesigner = pDesigner;
+            Watcher = new Stopwatch();
         }
 
-        public override void beginDrawingDesign()
-        {
+        public override void initDrawing()
+        {           
+            Watcher.Start();
+
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
             this.drawLine(currentDesign.baseLine);
             this.drawCustomLines(currentDesign.customLines);
+
+            Watcher.Stop();
+
+            EventHandler<TennisEventArgs> handler = finishDrawingDesign_EventHandler;
+            if (handler != null)
+            {
+                TennisEventArgs args = new TennisEventArgs();
+                args.DrawDuration = (float)Watcher.Elapsed.TotalMilliseconds;
+                args.VisualizationMode = TennisEventArgs.Mode.ARCADE;
+                handler(this, args);
+            }
+
         }
 
-        protected override void drawBorderLines(TLine[] pLines)
+        private void drawBorderLines(TLine[] pLines)
         {
             foreach (TLine line in pLines)
             {
@@ -55,7 +71,7 @@ namespace Tennis.ApplicationGUI
             }
         }
 
-        protected override void drawLine(TLine pLine)
+        private void drawLine(TLine pLine)
         {
             Line line = new Line();
             line.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.color));
@@ -68,7 +84,7 @@ namespace Tennis.ApplicationGUI
             mainDesigner.AddShape(line);
         }
 
-        protected override void drawBorderArcs(TArc[] pArcs)
+        private void drawBorderArcs(TArc[] pArcs)
         {
             foreach (TArc arc in pArcs)
             {
@@ -86,12 +102,13 @@ namespace Tennis.ApplicationGUI
             }
         }
 
-        protected override void drawCustomLines(List<TLine> pLines)
+        private void drawCustomLines(List<TLine> pLines)
         {            
             foreach (TLine line in pLines)
             {
                 drawLine(line);
             }
+
         }
     }
 }

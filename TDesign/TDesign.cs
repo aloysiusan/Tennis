@@ -124,5 +124,29 @@ namespace Tennis.Design
             baseLine.startPoint = pointE;
             baseLine.endPoint = pointD;
         }
+
+        public TDesign Clone()
+        {
+            TDesign thisClone = new TDesign(0, 0);
+            thisClone.pointA = this.pointA.Clone();
+            thisClone.pointB = this.pointB.Clone();
+            thisClone.pointC = this.pointC.Clone();
+            thisClone.pointD = this.pointD.Clone();
+            thisClone.pointE = this.pointE.Clone();
+
+            thisClone.designLines[0] = this.designLines[0].Clone(thisClone.pointB, thisClone.pointC);
+            thisClone.designLines[1] = this.designLines[1].Clone(thisClone.pointC, thisClone.pointD);
+
+            thisClone.designArcs[0] = this.designArcs[0].Clone(thisClone.pointE, thisClone.pointA);
+            thisClone.designArcs[1] = this.designArcs[1].Clone(thisClone.pointA, thisClone.pointB);
+
+            thisClone.baseLine = this.baseLine.Clone(thisClone.pointE, thisClone.pointD);
+
+            foreach(TLine line in this.customLines){
+                thisClone.customLines.Add(line.Clone(line.startPoint.Clone(),line.endPoint.Clone()));
+            }           
+
+            return thisClone;
+        }
     }
 }

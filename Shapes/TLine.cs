@@ -19,5 +19,13 @@ namespace Tennis.Shapes
             startPoint = pStartPoint;
             endPoint = pEndPoint;
         }
+
+        public TLine Clone(TPoint startPoint, TPoint endPoint)
+        {
+            TLine thisClone = new TLine(startPoint, endPoint);
+            thisClone.thickness = this.thickness;
+            thisClone.color = this.color;
+            return thisClone;
+        }
     }
 }

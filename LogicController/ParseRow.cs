@@ -13,13 +13,21 @@ namespace Tennis.Parse.Rows
         public string name;
         public string updatedAt;
         public TDesign data;
+        public float fireDuration;
+        public String fireDate;
+        public float arcadeDuration;
+        public String arcadeDate;
 
-        public ParseRow(string pID, string pName, string pCreatedAt, TDesign pData)
+        public ParseRow(string pID, string pName, string pUpdatedAt, TDesign pData, float pFireDuration, String pFireDate, float pArcadeDuration, String pArcadeDate)
         {
             id = pID;
             name = pName;
-            updatedAt = pCreatedAt;
+            updatedAt = pUpdatedAt;
             data = pData;
+            fireDuration = pFireDuration;
+            fireDate = pFireDate;
+            arcadeDuration = pArcadeDuration;
+            arcadeDate = pArcadeDate;
         }
     }
 }

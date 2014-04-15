@@ -74,8 +74,7 @@ namespace Tennis.ApplicationLogic
         {
             EventHandler<TennisEventArgs> handler = designLoadResponseRecieved_EventHandler;
             if (handler != null)
-            {
-                //Console.WriteLine(args.ParseJSONData);
+            {               
                 args.ParseObjectData = JsonConvert.DeserializeObject<ParseRow>(args.ParseJSONData);
                 handler(this, args);
             }
@@ -85,6 +84,16 @@ namespace Tennis.ApplicationLogic
         {
             String designJson = JsonConvert.SerializeObject(pDesign);
             ParseDataAccess.Instance().saveDesign(designJson, pDesignId);
+        }
+
+        public void updateDesignDurationOnFire(String pID, double pDuration, DateTime pDate)
+        {
+            ParseDataAccess.Instance().updateDesignDuration(pID, pDuration, pDate, "fire");
+        }
+
+        public void updateDesignDurationOnArcade(String pID, double pDuration, DateTime pDate)
+        {
+            ParseDataAccess.Instance().updateDesignDuration(pID, pDuration, pDate, "arcade");
         }
     }
 }

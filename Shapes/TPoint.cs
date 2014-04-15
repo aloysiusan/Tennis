@@ -47,8 +47,8 @@ namespace Tennis.Shapes{
         {
             if (id == 'l')
             {
-                XPosition = pXPosition;
-                YPosition = pYPosition;
+                XPosition = pXPosition - POSITION_OFFSET;
+                YPosition = pYPosition - POSITION_OFFSET;
                 globalXPositionPercent = pXPosition * 10 / pDesignerWidth;
                 globalYPositionPercent = pYPosition * 10 / pDesignerHeight;
             }
@@ -70,9 +70,20 @@ namespace Tennis.Shapes{
             XPosition = pRelativeWidth * (double)globalXPositionPercent / 10 - POSITION_OFFSET;
             YPosition = pRelativeHeight * (double)globalYPositionPercent / 10 - POSITION_OFFSET;            
         }
+
         public char getID()
         {
             return id;
+        }
+
+        public TPoint Clone()
+        {
+            TPoint thisClone = new TPoint(this.id, 0, 0, DefaultPosition.DefaultGeneric_XPosition, DefaultPosition.DefaultGeneric_YPosition);
+            thisClone.XPosition = this.XPosition;
+            thisClone.YPosition = this.YPosition;
+            thisClone.globalXPositionPercent = this.globalXPositionPercent;
+            thisClone.globalYPositionPercent = this.globalYPositionPercent;
+            return thisClone;
         }
     }
 }

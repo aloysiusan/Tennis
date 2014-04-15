@@ -8,7 +8,6 @@ namespace Tennis.Shapes
 {
     public class TArc
     {
-        public double angle = 0;
         public TPoint startPoint;
         public TPoint endPoint;
         public int thickness = 1;
@@ -21,6 +20,14 @@ namespace Tennis.Shapes
             startPoint = pStartPoint;
             endPoint = pEndPoint;
             inverted = pIsInverted;            
+        }
+
+        public TArc Clone(TPoint startPoint, TPoint endPoint)
+        {
+            TArc thisClone = new TArc(startPoint, endPoint, inverted);
+            thisClone.thickness = this.thickness;
+            thisClone.color = this.color;
+            return thisClone;
         }
     }
 }

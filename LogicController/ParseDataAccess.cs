@@ -67,6 +67,11 @@ namespace Tennis.Parse.Controller
             ParseObject newDesign = new ParseObject("Designs");
             newDesign["name"] = pName;
             newDesign["data"] = pData;
+            newDesign["fireDuration"] = 0;
+            newDesign["fireDate"] = null;
+            newDesign["arcadeDuration"] = 0;
+            newDesign["arcadeDate"] = null;
+
             try
             {
                 await newDesign.SaveAsync().ContinueWith(t =>
@@ -99,9 +104,31 @@ namespace Tennis.Parse.Controller
                 ParseObject result = t.Result;
                 String id = (string)result.ObjectId;
                 String name = result.Get<string>("name");
-                String updatedAt = result.UpdatedAt.ToString();
+                String updatedAt = ((DateTime)result.UpdatedAt).ToLocalTime().ToString();
                 String data = result.Get<string>("data");
-                responseJson = "{\"id\":\"" + id + "\",\"name\":\"" + name + "\",\"updatedAt\":\"" + updatedAt + "\",\"data\":" + data + "}";
+                float fireDuration = result.Get<float>("fireDuration");
+                float arcadeDuration = result.Get<float>("arcadeDuration");
+                String fireDate;
+                String arcadeDate;
+
+                try{
+                    fireDate = result.Get<DateTime>("fireDate").ToString();
+                }
+                catch(NullReferenceException){
+                    fireDate = "Sin Definir";
+                }
+
+                try
+                {
+                    arcadeDate = result.Get<DateTime>("arcadeDate").ToString();
+                }
+                catch (NullReferenceException)
+                {
+                    arcadeDate = "Sin Definir";
+                }
+
+                responseJson = "{\"id\":\"" + id + "\",\"name\":\"" + name + "\",\"updatedAt\":\"" + updatedAt + "\",\"data\":" + data + ",\"fireDuration\":"
+                    + fireDuration.ToString().Replace(',', '.') + ",\"fireDate\":\"" + fireDate + "\",\"arcadeDuration\":" + arcadeDuration.ToString().Replace(',', '.') + ",\"arcadeDate\":\"" + arcadeDate + "\"}";
             }) ;
 
             EventHandler<TennisEventArgs> handler = designLoadFinished_EventHandler;
@@ -121,6 +148,15 @@ namespace Tennis.Parse.Controller
             ParseQuery<ParseObject> query = ParseObject.GetQuery("Designs");
             ParseObject design = await query.GetAsync(pDesignId);
             design["data"] = pDesignData;
+            await design.SaveAsync();
+        }
+
+        public async void updateDesignDuration(String pDesignId, double pDuration, DateTime pDate, String pMode)
+        {
+            ParseQuery<ParseObject> query = ParseObject.GetQuery("Designs");
+            ParseObject design = await query.GetAsync(pDesignId);
+            design[pMode + "Duration"] = pDuration;
+            design[pMode + "Date"] = pDate;
             await design.SaveAsync();
         }
     }

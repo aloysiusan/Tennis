@@ -11,10 +11,9 @@ using System.Windows.Shapes;
 using Tennis.Design;
 using Tennis.Shapes;
 
-
 namespace Tennis.ApplicationGUI
 {
-    public class EditVisualizationMode : VisualizationMode
+    public class EditMode : VisualizationMode
     {
         private TDesign currentDesign;
         private Designer mainDesigner;
@@ -27,17 +26,17 @@ namespace Tennis.ApplicationGUI
         public int newLinesThickness;
         public string newLinesColor;
 
-        private static EditVisualizationMode _currentInstance;
+        private static EditMode _currentInstance;
 
-        public static EditVisualizationMode Instance()
+        public static EditMode Instance()
         {
             return _currentInstance;
         }
 
-        public static EditVisualizationMode createSingleInstance(TDesign pDesign, Designer pSender)
+        public static EditMode createInstance(TDesign pDesign, Designer pSender)
         {
             destroyCurrentInstance();
-            _currentInstance = new EditVisualizationMode(pDesign, pSender);
+            _currentInstance = new EditMode(pDesign, pSender);
             return _currentInstance;
         }
 
@@ -46,7 +45,7 @@ namespace Tennis.ApplicationGUI
             _currentInstance = null;
         }
 
-        private EditVisualizationMode(TDesign pDesign, Designer pSender) {
+        private EditMode(TDesign pDesign, Designer pSender) {
             currentDesign = pDesign;
             mainDesigner = pSender;
             mainDesigner.MouseLeftButtonDown += mainDesigner_MouseLeftButtonDown;
@@ -54,8 +53,9 @@ namespace Tennis.ApplicationGUI
             mainDesigner.MouseMove +=mainDesigner_MouseMove;
         }
 
-        public override void beginDrawingDesign()
+        public override void initDrawing()
         {
+            mainDesigner.root.Children.Clear();
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
             this.drawLine(currentDesign.baseLine);
@@ -68,7 +68,20 @@ namespace Tennis.ApplicationGUI
             this.drawPoint(currentDesign.getPointWithID('e'));
         }
 
-        protected void drawPoint(TPoint pPoint)
+        private void drawMatrix(int pos)
+        {
+            Line line = new Line();
+            line.Stroke = Brushes.Black;
+            line.X1 = pos;
+            line.X2 = pos + 1;
+            line.Y1 = pos;
+            line.Y2 = pos;
+            line.StrokeThickness = 1;
+
+            mainDesigner.AddShape(line);
+        }
+
+        private void drawPoint(TPoint pPoint)
         {
             Ellipse guiPoint = new Ellipse();
             guiPoint.Uid = pPoint.getID().ToString();
@@ -77,6 +90,7 @@ namespace Tennis.ApplicationGUI
             guiPoint.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.COLOR));
             guiPoint.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.COLOR));
             guiPoint.StrokeThickness = 1;
+            guiPoint.Cursor = Cursors.Hand;
 
             guiPoint.MouseLeftButtonUp += Point_MouseLeftButtonUp;
             guiPoint.MouseMove += Point_MouseMove;
@@ -87,7 +101,7 @@ namespace Tennis.ApplicationGUI
             mainDesigner.AddShape(guiPoint);
         }
 
-        protected override void drawBorderLines(TLine[] pLines)
+        private void drawBorderLines(TLine[] pLines)
         {
             foreach (TLine line in pLines)
             {
@@ -95,7 +109,7 @@ namespace Tennis.ApplicationGUI
             }
         }
 
-        protected override void drawLine(TLine pLine)
+        private void drawLine(TLine pLine)
         {
             Line line = new Line();
             line.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.color));
@@ -108,7 +122,7 @@ namespace Tennis.ApplicationGUI
             mainDesigner.AddShape(line);
         }
 
-        protected override void drawBorderArcs(TArc[] pArcs)
+        private void drawBorderArcs(TArc[] pArcs)
         {
             foreach (TArc arc in pArcs)
             {
@@ -126,7 +140,7 @@ namespace Tennis.ApplicationGUI
             }
         }
 
-        protected override void drawCustomLines(List<TLine> pLines)
+        private void drawCustomLines(List<TLine> pLines)
         {
             foreach (TLine line in pLines)
             {
@@ -134,9 +148,34 @@ namespace Tennis.ApplicationGUI
             }
         }
 
+        public void setBorderThickness(int pValue)
+        {
+            currentDesign.setBorderThickness(pValue);
+            this.initDrawing();
+        }
+
+        public void setBaseLineThickness(int pValue)
+        {
+            currentDesign.setBaseLineThickness(pValue);
+            this.initDrawing();
+        }
+
+        public void setBorderColor(String pColor)
+        {
+            currentDesign.setBorderColor(pColor);
+            this.initDrawing();
+        }
+
+        public void setBaseLineColor(String pColor)
+        {
+            currentDesign.setBaseLineColor(pColor);
+            this.initDrawing();
+
+        }
+
         private void Point_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (sender != null)
+            if (sender != null && !isDrawingLines)
             {
                 Ellipse selectedPoint = ((Ellipse)sender);
                 Point p = e.GetPosition(mainDesigner);
@@ -150,14 +189,13 @@ namespace Tennis.ApplicationGUI
                 Canvas.SetZIndex(selectedPoint, 0);
                 _IsDragging = false;
                 selectedPoint = null;
-                mainDesigner.root.Children.Clear();
-                this.beginDrawingDesign();
+                this.initDrawing();
             }
         }
 
         private void Point_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_IsDragging)
+            if (_IsDragging && !isDrawingLines)
             {
                 Ellipse selectedPoint = ((Ellipse)sender);
                 Point p = e.GetPosition(mainDesigner);
@@ -173,7 +211,7 @@ namespace Tennis.ApplicationGUI
 
         private void Point_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender != null)
+            if (sender != null && !isDrawingLines)
             {
                 Ellipse selectedPoint = ((Ellipse)sender);
                 selectedPoint.CaptureMouse();

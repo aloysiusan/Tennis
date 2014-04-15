@@ -8,6 +8,10 @@ namespace Tennis.TEventArgs
 {
     public class TennisEventArgs : EventArgs
     {
+        public enum Mode{
+            FIRE, ARCADE
+        }
+
         private String _ParseJSONData;
         private bool _FinishedSuccessfully;
         private bool _isNewDesign;
@@ -15,6 +19,8 @@ namespace Tennis.TEventArgs
         private object _ParseObjectData;
         private object[] _DesignData;
         private List<object> _DesignsList;
+        private float _DrawDuration;
+        private Mode _VisualizationMode;
 
         public String ParseJSONData
         {
@@ -56,6 +62,18 @@ namespace Tennis.TEventArgs
         {
             get { return _selectedDesignID; }
             set { _selectedDesignID = value; }
+        }
+
+        public float DrawDuration
+        {
+            get { return _DrawDuration; }
+            set { _DrawDuration = value; }
+        }
+
+        public Mode VisualizationMode
+        {
+            get { return _VisualizationMode; }
+            set { _VisualizationMode = value; }
         }
     }
 }
