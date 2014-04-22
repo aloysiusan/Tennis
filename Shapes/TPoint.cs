@@ -30,9 +30,10 @@ namespace Tennis.Shapes{
         public double globalYPositionPercent = 0;
         public static readonly double RADIUS = 4;
         private readonly int POSITION_OFFSET = 2; /* RADIUS / 2 */
-        public static readonly String COLOR = "#FF0000";
+        public static readonly String DEFAULT_COLOR = "#FF0000";
+        public string fillColor;
+        public string oldColor;
 
-        
         public TPoint(char pID, double pDesignerWidth, double pDesignerHeight, DefaultPosition pDefaultPositionX, DefaultPosition pDefaultPositionY)
         {
             id = pID;
@@ -43,15 +44,12 @@ namespace Tennis.Shapes{
 
         }
 
-        public void loadCustomPointData(double pDesignerWidth, double pDesignerHeight, double pXPosition, double pYPosition)
+        public void setCustomPointData(double pDesignerWidth, double pDesignerHeight, double pXPosition, double pYPosition)
         {
-            if (id == 'l')
-            {
-                XPosition = pXPosition - POSITION_OFFSET;
-                YPosition = pYPosition - POSITION_OFFSET;
-                globalXPositionPercent = pXPosition * 10 / pDesignerWidth;
-                globalYPositionPercent = pYPosition * 10 / pDesignerHeight;
-            }
+            XPosition = pXPosition - POSITION_OFFSET;
+            YPosition = pYPosition - POSITION_OFFSET;
+            globalXPositionPercent = pXPosition * 10 / pDesignerWidth;
+            globalYPositionPercent = pYPosition * 10 / pDesignerHeight;
         }
 
         public void setXPositionRelative(double pPosition,double relativeWidth){
@@ -83,6 +81,8 @@ namespace Tennis.Shapes{
             thisClone.YPosition = this.YPosition;
             thisClone.globalXPositionPercent = this.globalXPositionPercent;
             thisClone.globalYPositionPercent = this.globalYPositionPercent;
+            thisClone.fillColor = this.fillColor;
+            thisClone.oldColor = this.oldColor;
             return thisClone;
         }
     }

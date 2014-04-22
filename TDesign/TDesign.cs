@@ -34,8 +34,11 @@ namespace Tennis.Design
         public List<TLine> customLines;
 
         public TLine baseLine; //Suela
-        public TArc[] designArcs;       
-        
+        public TArc[] designArcs;
+
+        public List<TEllipse> customEllipses;
+
+        public List<TPoint> fillIndicators;
 
         public TDesign( double pContainerWidth, double pContainerHeight)
         {
@@ -48,6 +51,8 @@ namespace Tennis.Design
             designLines = new TLine[2];
             designArcs = new  TArc[2];
             customLines = new List<TLine>();
+            customEllipses = new List<TEllipse>();
+            fillIndicators = new List<TPoint>();
 
             designLines[0] = new TLine(pointB, pointC);
             designLines[1] = new TLine(pointC, pointD);
@@ -144,7 +149,16 @@ namespace Tennis.Design
 
             foreach(TLine line in this.customLines){
                 thisClone.customLines.Add(line.Clone(line.startPoint.Clone(),line.endPoint.Clone()));
-            }           
+            }      
+     
+            foreach(TEllipse ellipse in this.customEllipses){
+                thisClone.customEllipses.Add(ellipse.Clone(ellipse.radiusPoint));
+            }
+
+            foreach (TPoint fillPoint in this.fillIndicators)
+            {
+                thisClone.fillIndicators.Add(fillPoint.Clone());
+            }
 
             return thisClone;
         }

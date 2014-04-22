@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Tennis.ApplicationLogic;
 using Tennis.TEventArgs;
 using Tennis.Parse.Rows;
+using System.Threading.Tasks;
 
 namespace Tennis.ApplicationGUI
 {
@@ -75,10 +76,7 @@ namespace Tennis.ApplicationGUI
         }
 
         public void drawDesignUsingMode(VisualizationMode pMode)
-        {
-            designerView.root.Children.Clear();
-            designerView.BorderThickness = new Thickness(1);
-
+        {            
             pMode.initDrawing();
         } 
         
@@ -121,11 +119,7 @@ namespace Tennis.ApplicationGUI
 
                
         private void loadSelectedDesign(object sender, TennisEventArgs args)
-        {            
-            Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
-            Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
-            Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
-
+        {
             if (args.FinishedSuccessfully && args.IsNewDesign)
             {
                 Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton((string)args.DesignData[0], (string)args.DesignData[1], 
@@ -136,12 +130,15 @@ namespace Tennis.ApplicationGUI
             }
             else
             {                
-                Dispatcher.BeginInvoke(new Action(() => this.drawDesignUsingMode(VisualizationMode.createInstance(ApplicationController.Instance(),this.designerView,selectedMode))));                
+                this.drawDesignUsingMode(VisualizationMode.createInstance(ApplicationController.Instance(),this.designerView,selectedMode));                
 
                 Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
                 Dispatcher.BeginInvoke(new Action(() => btnEditDesign.IsEnabled = true));               
             }
 
+            Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
+            Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
+            Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
             Dispatcher.BeginInvoke(new Action(() => btnReports.IsEnabled = true));           
         }
 
@@ -215,6 +212,7 @@ namespace Tennis.ApplicationGUI
             }
 
             chkDrawLines.IsChecked = false;
+            chkPaint.IsChecked = false;
 
             this.drawDesignUsingMode(VisualizationMode.createInstance(ApplicationController.Instance(), this.designerView, selectedMode)); 
 
@@ -266,6 +264,7 @@ namespace Tennis.ApplicationGUI
         private void chkDrawLines_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
             designerView.Cursor = Cursors.Hand;
+            chkPaint.IsChecked = false;
             EditMode.Instance().isDrawingLines = true;
             EditMode.Instance().newLinesColor = "#" + lineColorPicker.SelectedColor.R.ToString("X2") + lineColorPicker.SelectedColor.G.ToString("X2") + lineColorPicker.SelectedColor.B.ToString("X2");
             EditMode.Instance().newLinesThickness = (int)lineThicknessSld.Value;
@@ -303,5 +302,63 @@ namespace Tennis.ApplicationGUI
             lblArcadeDate.Content = ApplicationController.Instance().getCurrentDesignArcadeDurationDate();
         }
 
+        private void btnDrawShape_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            EditMode.Instance().isDrawingEllipse = true;
+            designerView.Cursor = Cursors.Hand;
+            EditMode.Instance().ellipseBorderColor = "#" + shapeBorderColorPicker.SelectedColor.R.ToString("X2") + shapeBorderColorPicker.SelectedColor.G.ToString("X2") + shapeBorderColorPicker.SelectedColor.B.ToString("X2");
+            EditMode.Instance().ellipseFillColor = "#" + shapeFillColorPicker.SelectedColor.R.ToString("X2") + shapeFillColorPicker.SelectedColor.G.ToString("X2") + shapeFillColorPicker.SelectedColor.B.ToString("X2");
+            EditMode.Instance().ellipseRadius = (int)sldEllipseRadius.Value;
+            EditMode.Instance().ellipseThickness = (int)sldEllipseThickness.Value;
+        }
+
+        private void sldEllipseThickness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            try
+            {
+                lblEllipseThickness.Content = ((int)e.NewValue).ToString() + "px";
+                EditMode.Instance().ellipseThickness = ((int)e.NewValue);
+            }
+            catch (NullReferenceException) { } 
+        }
+
+        private void sldEllipseRadius_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            try
+            {
+                lblEllipseRadius.Content = ((int)e.NewValue).ToString() + "px";
+                EditMode.Instance().ellipseRadius = ((int)e.NewValue);
+            }
+            catch (NullReferenceException) { } 
+        }
+
+        private void shapeBorderColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            EditMode.Instance().ellipseBorderColor = "#" + e.NewValue.R.ToString("X2") + e.NewValue.G.ToString("X2") + e.NewValue.B.ToString("X2");
+        }
+
+        private void shapeFillColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            EditMode.Instance().ellipseFillColor = "#" + e.NewValue.R.ToString("X2") + e.NewValue.G.ToString("X2") + e.NewValue.B.ToString("X2");
+        }
+
+        private void chkPaint_Checked(object sender, RoutedEventArgs e)
+        {
+            designerView.Cursor = Cursors.Hand;
+            chkDrawLines.IsChecked = false;
+            EditMode.Instance().isPainting = true;
+            EditMode.Instance().paintColor = "#" + fillColorPicker.SelectedColor.R.ToString("X2") + fillColorPicker.SelectedColor.G.ToString("X2") + fillColorPicker.SelectedColor.B.ToString("X2");      
+        }
+
+        private void chkPaint_Unchecked(object sender, RoutedEventArgs e)
+        {
+            designerView.Cursor = Cursors.Arrow;
+            EditMode.Instance().isPainting = false;
+        }
+
+        private void fillColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+            EditMode.Instance().paintColor = "#" + e.NewValue.R.ToString("X2") + e.NewValue.G.ToString("X2") + e.NewValue.B.ToString("X2");                 
+        }
     }
 }

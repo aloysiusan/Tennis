@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Tennis.Design;
@@ -22,17 +23,16 @@ namespace Tennis.ApplicationGUI
 
         public event EventHandler<TennisEventArgs> finishDrawingDesign_EventHandler;
 
-        public static ArcadeMode Instance()
-        {
-            return _currentInstance;
-        }
-
         public static ArcadeMode createInstance(TDesign pDesign, Designer pDesigner)
         {
             _currentInstance = new ArcadeMode(pDesign, pDesigner);
             return _currentInstance;
         }
 
+        public static ArcadeMode Instance()
+        {
+            return _currentInstance;
+        }
 
         private ArcadeMode(TDesign pDesign, Designer pDesigner)
         {
@@ -44,12 +44,13 @@ namespace Tennis.ApplicationGUI
         public override void initDrawing()
         {           
             Watcher.Start();
-
+            mainDesigner.root.Children.Clear();
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
             this.drawLine(currentDesign.baseLine);
             this.drawCustomLines(currentDesign.customLines);
-
+            this.drawCustomEllipses(currentDesign.customEllipses);
+            
             Watcher.Stop();
 
             EventHandler<TennisEventArgs> handler = finishDrawingDesign_EventHandler;
@@ -108,7 +109,28 @@ namespace Tennis.ApplicationGUI
             {
                 drawLine(line);
             }
+        }
 
+        private void drawEllipse(TEllipse pEllipse)
+        {
+            Ellipse newEllipse = new Ellipse();
+            newEllipse.Height = pEllipse.radius*2;
+            newEllipse.Width = pEllipse.radius*2;
+            newEllipse.StrokeThickness = pEllipse.thickness;
+            newEllipse.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.fillColor));
+            newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
+            Canvas.SetLeft(newEllipse, pEllipse.radiusPoint.XPosition - pEllipse.radius / 2);
+            Canvas.SetTop(newEllipse, pEllipse.radiusPoint.YPosition - pEllipse.radius / 2);
+            mainDesigner.AddShape(newEllipse);
+        }
+
+
+        private void drawCustomEllipses(List<TEllipse> pEllipses)
+        {
+            foreach (TEllipse ellipse in pEllipses)
+            {
+                drawEllipse(ellipse);
+            }
         }
     }
 }

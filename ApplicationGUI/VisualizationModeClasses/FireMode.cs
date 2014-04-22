@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Tennis.Design;
 using Tennis.Shapes;
@@ -18,15 +20,10 @@ namespace Tennis.ApplicationGUI
         private TDesign currentDesign;
         private Designer mainDesigner;
         private Stopwatch Watcher;
-
+        private WriteableBitmap mainBitmap;
         private static FireMode _currentInstance;
 
         public event EventHandler<TennisEventArgs> finishDrawingDesign_EventHandler;
-
-        public static FireMode Instance()
-        {
-            return _currentInstance;
-        }
 
         public static FireMode createInstance(TDesign pDesign, Designer pDesigner)
         {
@@ -41,14 +38,32 @@ namespace Tennis.ApplicationGUI
             Watcher = new Stopwatch();
         }
 
+        public static FireMode Instance()
+        {
+            return _currentInstance;
+        }
+
         public override void initDrawing()
         {
             Watcher.Start();
 
+            mainDesigner.root.Children.Clear();
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
             this.drawLine(currentDesign.baseLine);
             this.drawCustomLines(currentDesign.customLines);
+            this.drawCustomEllipses(currentDesign.customEllipses);
+            mainBitmap = BitmapConverter.CreateWriteableBitmapFromCanvas(mainDesigner.root);
+
+            foreach (TPoint fillPoint in currentDesign.fillIndicators)
+            {
+                this.paint(fillPoint);
+            }
+
+            mainDesigner.root.Children.Clear();
+            Image finishedDesign = new Image();
+            finishedDesign.Source = mainBitmap;
+            mainDesigner.root.Children.Add(finishedDesign) ;
 
             Watcher.Stop();
 
@@ -107,6 +122,77 @@ namespace Tennis.ApplicationGUI
             {
                 drawLine(line);
             }
+        }
+
+        private void drawEllipse(TEllipse pEllipse)
+        {
+            EllipseGeometry newEllipse = new EllipseGeometry(new Point(pEllipse.radiusPoint.XPosition, pEllipse.radiusPoint.YPosition), pEllipse.radius, pEllipse.radius);
+            Path path = new Path();
+
+            path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
+            path.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.fillColor));
+            path.StrokeThickness = pEllipse.thickness;
+
+            path.Data = newEllipse;
+
+            mainDesigner.AddShape(path);
+        }
+
+        private void drawCustomEllipses(List<TEllipse> pEllipses)
+        {
+            foreach (TEllipse ellipse in pEllipses)
+            {
+                drawEllipse(ellipse);
+            }
+        }
+
+        private void paint(TPoint fillPoint)
+        {            
+            fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight);
+
+            Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); //Debe multiplicarse por una constante K tal que K = DPI/96 para que pinte el area correcta
+                                                                                                                            //debido a la escala utilizada para crear el bitmap.
+            Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor);
+            Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor);
+            try
+             {
+                 Stack<Point> StackPoint = new Stack<Point>();
+                 StackPoint.Push(pt);
+                 while (StackPoint.Count != 0)
+                 {
+                     pt = StackPoint.Pop();
+                     Color CurrentColor = GetPixelColor((int)pt.X,(int)pt.Y);
+                     if (ColorMatch(CurrentColor, oldColor))
+                     {
+                         SetPixelColor((int)pt.X, (int)pt.Y, newColor);
+                         StackPoint.Push(new Point(pt.X - 1, pt.Y));
+                         StackPoint.Push(new Point(pt.X + 1, pt.Y));
+                         StackPoint.Push(new Point(pt.X, pt.Y - 1));
+                         StackPoint.Push(new Point(pt.X, pt.Y + 1));
+                     }
+                 }
+             }
+             catch (Exception ex) { Console.WriteLine(ex); }
+        }
+
+        private bool ColorMatch(Color a, Color b)
+        {
+            int diff = 10;
+            return (a.A - diff < b.A && a.A + diff > b.A && a.R - diff < b.R && a.R + diff > b.R &&
+                        a.G - diff < b.G && a.G + diff > b.G && a.B - diff < b.B && a.B + diff > b.B);
+        }
+
+        private Color GetPixelColor(int x, int y)
+        {            
+            var pixels = new byte[4];
+            mainBitmap.CopyPixels(new Int32Rect(x,y,1,1), pixels, 4, 0);
+            return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
+        }
+
+        private void SetPixelColor(int x, int y, Color newColor)
+        {                                                           
+            var pixels = new byte[] { newColor.B, newColor.G, newColor.R, newColor.A }; // Blue Green Red Alpha
+            mainBitmap.WritePixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0); 
         }
     }
 }

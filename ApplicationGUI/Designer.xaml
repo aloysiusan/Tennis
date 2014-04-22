@@ -6,6 +6,6 @@
 	mc:Ignorable="d"
 	x:Class="Tennis.ApplicationGUI.Designer"
 	x:Name="UserControl"
-	d:DesignWidth="640" d:DesignHeight="480" Width="260" Height="130">
-	<Canvas x:Name="root" Margin="0"/>
+	d:DesignWidth="640" d:DesignHeight="480" Width="260" Height="130" Background="White">
+	<Canvas x:Name="root" Margin="0" Background="White"/>
 </UserControl>

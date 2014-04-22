@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TArc.cs" />
+    <Compile Include="TEllipse.cs" />
     <Compile Include="TLine.cs" />
     <Compile Include="TPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

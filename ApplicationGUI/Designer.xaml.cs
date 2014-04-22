@@ -32,5 +32,6 @@ namespace Tennis.ApplicationGUI
         {
             this.root.Children.Add(pShape);
         }
+
 	}
 }

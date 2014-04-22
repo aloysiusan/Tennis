@@ -43,8 +43,7 @@ namespace Tennis.Parse.Controller
                         jsonResponse += "{\"id\":\"" + (string)obj.ObjectId + "\", \"name\":\"" + obj.Get<string>("name") + "\",\"updatedAt\":\"" + ((DateTime)obj.UpdatedAt).ToLocalTime().ToString() + "\",\"data\":null},";                        
                     }
                     jsonResponse += "]";
-                    Console.WriteLine(jsonResponse);
-                }
+                 }
                 catch (AggregateException) { success = false; }
                 finally
                 {
