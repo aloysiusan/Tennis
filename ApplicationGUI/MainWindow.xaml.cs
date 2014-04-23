@@ -37,7 +37,7 @@ namespace Tennis.ApplicationGUI
             ApplicationController.Instance().designsReady_EventHandler += new EventHandler<TennisEventArgs>(this.fillListWithDesigns);
             ApplicationController.Instance().designCreationStatusFailed_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationFailed);
             ApplicationController.Instance().designDataReady_EventHandler += new EventHandler<TennisEventArgs>(this.loadSelectedDesign);
-            ApplicationController.Instance().designDurationUpdated_EventHandler += OnDesignDurationUpdated;
+            ApplicationController.Instance().designDurationUpdated_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignFinishedLoading);
         }
         
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -75,11 +75,13 @@ namespace Tennis.ApplicationGUI
             }
         }
 
-        public void drawDesignUsingMode(VisualizationMode pMode)
-        {            
-            pMode.initDrawing();
-        } 
-        
+        private void drawDesignUsingMode(VisualizationMode pMode)
+        {
+            Thread thread = new Thread(pMode.initDrawing());
+            thread.Start();
+            
+        }
+
         private void fillListWithDesigns(object sender, TennisEventArgs args) {
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
@@ -125,7 +127,6 @@ namespace Tennis.ApplicationGUI
                 Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton((string)args.DesignData[0], (string)args.DesignData[1], 
                     (string)args.DesignData[2], true, OnDesignItemSelected))));
                 Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
-                Dispatcher.BeginInvoke(new Action(() => OnDesignDurationUpdated(this, new EventArgs())));
                 Dispatcher.BeginInvoke(new Action(() => currentDesignReportsView.Visibility = Visibility.Hidden));  
             }
             else
@@ -145,7 +146,7 @@ namespace Tennis.ApplicationGUI
         private void rdbDrawFire_Checked(object sender, RoutedEventArgs e)
         {
             selectedMode = VisualizationMode.Mode.FIRE;
-            if (ApplicationController.Instance().getCurrentDesign() != null)            
+            if (ApplicationController.Instance().getCurrentDesign() != null)
                 this.drawDesignUsingMode(VisualizationMode.createInstance(ApplicationController.Instance(), this.designerView, selectedMode));    
             
         }
@@ -153,7 +154,7 @@ namespace Tennis.ApplicationGUI
         private void rdbDrawArcade_Checked(object sender, RoutedEventArgs e)
         {
             selectedMode = VisualizationMode.Mode.ARCADE;
-            if (ApplicationController.Instance().getCurrentDesign() != null)            
+            if (ApplicationController.Instance().getCurrentDesign() != null)
                 this.drawDesignUsingMode(VisualizationMode.createInstance(ApplicationController.Instance(), this.designerView, selectedMode)); 
             
         }
@@ -294,12 +295,18 @@ namespace Tennis.ApplicationGUI
         	currentDesignReportsView.Visibility = Visibility.Hidden; 
         }
 
-        private void OnDesignDurationUpdated(object sender, EventArgs e)
+        private void OnDesignFinishedLoading(object sender, TennisEventArgs args)
         {
             lblFireDuration.Content = ApplicationController.Instance().getCurrentDesignFireDuration();
             lblFireDate.Content = ApplicationController.Instance().getCurrentDesignFireDurationDate();
             lblArcadeDuration.Content = (ApplicationController.Instance().getCurrentDesignArcadeDuration());
             lblArcadeDate.Content = ApplicationController.Instance().getCurrentDesignArcadeDurationDate();
+
+            Console.WriteLine("finished drawing");
+            designerView.root.Children.Clear();
+            Image finishedDesign = new Image();
+            finishedDesign.Source = args.DesignBitmap;
+            designerView.AddShape(finishedDesign);
         }
 
         private void btnDrawShape_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

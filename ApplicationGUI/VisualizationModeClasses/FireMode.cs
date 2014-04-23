@@ -60,11 +60,6 @@ namespace Tennis.ApplicationGUI
                 this.paint(fillPoint);
             }
 
-            mainDesigner.root.Children.Clear();
-            Image finishedDesign = new Image();
-            finishedDesign.Source = mainBitmap;
-            mainDesigner.root.Children.Add(finishedDesign) ;
-
             Watcher.Stop();
 
             EventHandler<TennisEventArgs> handler = finishDrawingDesign_EventHandler;
@@ -73,6 +68,7 @@ namespace Tennis.ApplicationGUI
                 TennisEventArgs args = new TennisEventArgs();
                 args.DrawDuration = (float)Watcher.Elapsed.TotalMilliseconds;
                 args.VisualizationMode = TennisEventArgs.Mode.FIRE;
+                args.DesignBitmap = mainBitmap;
                 handler(this, args);
             }
         }
@@ -147,32 +143,33 @@ namespace Tennis.ApplicationGUI
         }
 
         private void paint(TPoint fillPoint)
-        {            
+        {
             fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight);
 
             Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); //Debe multiplicarse por una constante K tal que K = DPI/96 para que pinte el area correcta
-                                                                                                                            //debido a la escala utilizada para crear el bitmap.
+            //debido a la escala utilizada para crear el bitmap.
             Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor);
             Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor);
             try
-             {
-                 Stack<Point> StackPoint = new Stack<Point>();
-                 StackPoint.Push(pt);
-                 while (StackPoint.Count != 0)
-                 {
-                     pt = StackPoint.Pop();
-                     Color CurrentColor = GetPixelColor((int)pt.X,(int)pt.Y);
-                     if (ColorMatch(CurrentColor, oldColor))
-                     {
-                         SetPixelColor((int)pt.X, (int)pt.Y, newColor);
-                         StackPoint.Push(new Point(pt.X - 1, pt.Y));
-                         StackPoint.Push(new Point(pt.X + 1, pt.Y));
-                         StackPoint.Push(new Point(pt.X, pt.Y - 1));
-                         StackPoint.Push(new Point(pt.X, pt.Y + 1));
-                     }
-                 }
-             }
-             catch (Exception ex) { Console.WriteLine(ex); }
+            {
+                Stack<Point> StackPoint = new Stack<Point>();
+                StackPoint.Push(pt);
+                while (StackPoint.Count != 0)
+                {
+                    pt = StackPoint.Pop();
+                    Color CurrentColor = GetPixelColor((int)pt.X, (int)pt.Y);
+                    if (ColorMatch(CurrentColor, oldColor))
+                    {
+                        Random rnd = new Random();
+                        SetPixelColor((int)pt.X, (int)pt.Y, newColor);
+                        for (int i = 0; i < 12; i++)
+                        {
+                            StackPoint.Push(new Point(pt.X + rnd.Next(3) - 1, pt.Y + rnd.Next(3) - 1));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) { Console.WriteLine(ex); }
         }
 
         private bool ColorMatch(Color a, Color b)

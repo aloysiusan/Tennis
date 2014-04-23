@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Tennis.Design;
 using Tennis.Shapes;
@@ -18,6 +19,7 @@ namespace Tennis.ApplicationGUI
     {
         private TDesign currentDesign;
         private Designer mainDesigner;
+        private WriteableBitmap mainBitmap;
         private static ArcadeMode _currentInstance;
         private Stopwatch Watcher;
 
@@ -50,7 +52,13 @@ namespace Tennis.ApplicationGUI
             this.drawLine(currentDesign.baseLine);
             this.drawCustomLines(currentDesign.customLines);
             this.drawCustomEllipses(currentDesign.customEllipses);
-            
+            mainBitmap = BitmapConverter.CreateWriteableBitmapFromCanvas(mainDesigner.root);
+
+            foreach (TPoint fillPoint in currentDesign.fillIndicators)
+            {
+                this.paint(fillPoint);
+            }
+
             Watcher.Stop();
 
             EventHandler<TennisEventArgs> handler = finishDrawingDesign_EventHandler;
@@ -59,6 +67,7 @@ namespace Tennis.ApplicationGUI
                 TennisEventArgs args = new TennisEventArgs();
                 args.DrawDuration = (float)Watcher.Elapsed.TotalMilliseconds;
                 args.VisualizationMode = TennisEventArgs.Mode.ARCADE;
+                args.DesignBitmap = mainBitmap;
                 handler(this, args);
             }
 
@@ -131,6 +140,55 @@ namespace Tennis.ApplicationGUI
             {
                 drawEllipse(ellipse);
             }
+        }
+
+        private void paint(TPoint fillPoint)
+        {
+            fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight);
+
+            Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); //Debe multiplicarse por una constante K tal que K = DPI/96 para que pinte el area correcta
+            //debido a la escala utilizada para crear el bitmap.
+            Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor);
+            Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor);
+            try
+            {
+                Stack<Point> StackPoint = new Stack<Point>();
+                StackPoint.Push(pt);
+                while (StackPoint.Count != 0)
+                {
+                    pt = StackPoint.Pop();
+                    Color CurrentColor = GetPixelColor((int)pt.X, (int)pt.Y);
+                    if (ColorMatch(CurrentColor, oldColor))
+                    {
+                        SetPixelColor((int)pt.X, (int)pt.Y, newColor);
+                        StackPoint.Push(new Point(pt.X - 1, pt.Y));
+                        StackPoint.Push(new Point(pt.X + 1, pt.Y));
+                        StackPoint.Push(new Point(pt.X, pt.Y - 1));
+                        StackPoint.Push(new Point(pt.X, pt.Y + 1));
+                    }
+                }
+            }
+            catch (Exception ex) { Console.WriteLine(ex); }
+        }
+
+        private bool ColorMatch(Color a, Color b)
+        {
+            int diff = 10;
+            return (a.A - diff < b.A && a.A + diff > b.A && a.R - diff < b.R && a.R + diff > b.R &&
+                        a.G - diff < b.G && a.G + diff > b.G && a.B - diff < b.B && a.B + diff > b.B);
+        }
+
+        private Color GetPixelColor(int x, int y)
+        {
+            var pixels = new byte[4];
+            mainBitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
+            return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
+        }
+
+        private void SetPixelColor(int x, int y, Color newColor)
+        {
+            var pixels = new byte[] { newColor.B, newColor.G, newColor.R, newColor.A }; // Blue Green Red Alpha
+            mainBitmap.WritePixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
         }
     }
 }

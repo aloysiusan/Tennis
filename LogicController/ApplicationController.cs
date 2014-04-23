@@ -16,7 +16,7 @@ namespace Tennis.ApplicationLogic
         public event EventHandler<TennisEventArgs> designsReady_EventHandler;
         public event EventHandler<TennisEventArgs> designCreationStatusFailed_EventHandler;
         public event EventHandler<TennisEventArgs> designDataReady_EventHandler;
-        public event EventHandler<EventArgs> designDurationUpdated_EventHandler;
+        public event EventHandler<TennisEventArgs> designDurationUpdated_EventHandler;
 
         private static ApplicationController instance;        
         private object[] currentDesignData;
@@ -148,10 +148,10 @@ namespace Tennis.ApplicationLogic
                 }
             }
 
-            EventHandler<EventArgs> handler = designDurationUpdated_EventHandler;
+            EventHandler<TennisEventArgs> handler = designDurationUpdated_EventHandler;
             if (handler != null)
-            {
-                handler(this, new EventArgs());
+            {                
+                handler(this, args);
             }
         }
     }

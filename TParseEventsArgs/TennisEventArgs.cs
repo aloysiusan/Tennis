@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace Tennis.TEventArgs
 {
@@ -21,6 +22,7 @@ namespace Tennis.TEventArgs
         private List<object> _DesignsList;
         private float _DrawDuration;
         private Mode _VisualizationMode;
+        private WriteableBitmap _designBitmap;
 
         public String ParseJSONData
         {
@@ -68,6 +70,12 @@ namespace Tennis.TEventArgs
         {
             get { return _DrawDuration; }
             set { _DrawDuration = value; }
+        }
+
+        public WriteableBitmap DesignBitmap
+        {
+            get { return _designBitmap; }
+            set { _designBitmap = value; }
         }
 
         public Mode VisualizationMode
