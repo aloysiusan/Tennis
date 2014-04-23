@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Tennis.Design;
 using Tennis.Shapes;
 using Tennis.TEventArgs;
@@ -47,7 +49,6 @@ namespace Tennis.ApplicationGUI
         {
             Watcher.Start();
 
-            mainDesigner.root.Children.Clear();
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
             this.drawLine(currentDesign.baseLine);
@@ -57,7 +58,7 @@ namespace Tennis.ApplicationGUI
 
             foreach (TPoint fillPoint in currentDesign.fillIndicators)
             {
-                this.paint(fillPoint);
+                this.paint(fillPoint);        
             }
 
             Watcher.Stop();
@@ -71,6 +72,7 @@ namespace Tennis.ApplicationGUI
                 args.DesignBitmap = mainBitmap;
                 handler(this, args);
             }
+
         }
 
         private void drawBorderLines(TLine[] pLines) {
@@ -78,6 +80,7 @@ namespace Tennis.ApplicationGUI
             {
                 drawLine(tline);
             }
+            Console.WriteLine("border lines painted");
         }
 
         private void drawLine(TLine pLine)
@@ -110,6 +113,7 @@ namespace Tennis.ApplicationGUI
                 path.StrokeThickness = arc.thickness;
                 mainDesigner.AddShape(path);
             }
+            Console.WriteLine("border arcs painted");
         }
 
         private void drawCustomLines(List<TLine> pLines)
@@ -118,6 +122,8 @@ namespace Tennis.ApplicationGUI
             {
                 drawLine(line);
             }
+
+            Console.WriteLine("custom lines painted");
         }
 
         private void drawEllipse(TEllipse pEllipse)
@@ -131,7 +137,7 @@ namespace Tennis.ApplicationGUI
 
             path.Data = newEllipse;
 
-            mainDesigner.AddShape(path);
+            mainDesigner.AddShape(path);            
         }
 
         private void drawCustomEllipses(List<TEllipse> pEllipses)
@@ -140,6 +146,7 @@ namespace Tennis.ApplicationGUI
             {
                 drawEllipse(ellipse);
             }
+            Console.WriteLine("ellipses painted");
         }
 
         private void paint(TPoint fillPoint)

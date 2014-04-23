@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Tennis.Design;
 using Tennis.Shapes;
 using Tennis.ApplicationLogic;
+using System.Windows.Threading;
 
 namespace Tennis.ApplicationGUI
 {
@@ -17,8 +18,7 @@ namespace Tennis.ApplicationGUI
             FIRE, ARCADE, EDIT
         }
 
-        public static VisualizationMode createInstance(ApplicationController mainController, Designer pDesigner, Mode pSelectedMode)
-        {
+        public static VisualizationMode createInstance(ApplicationController mainController, Designer pDesigner, Mode pSelectedMode){
             if (pSelectedMode == Mode.FIRE)
             {
                 mainController.getCurrentDesign().adjustPoints(pDesigner.ActualWidth,pDesigner.ActualHeight);

@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Tennis.Design;
 using Tennis.Shapes;
 using Tennis.TEventArgs;
@@ -46,7 +47,7 @@ namespace Tennis.ApplicationGUI
         public override void initDrawing()
         {           
             Watcher.Start();
-            mainDesigner.root.Children.Clear();
+
             this.drawBorderLines(currentDesign.designLines);
             this.drawBorderArcs(currentDesign.designArcs);
             this.drawLine(currentDesign.baseLine);

@@ -77,9 +77,8 @@ namespace Tennis.ApplicationGUI
 
         private void drawDesignUsingMode(VisualizationMode pMode)
         {
-            Thread thread = new Thread(pMode.initDrawing());
-            thread.Start();
-            
+            designerView.root.Children.Clear();
+            pMode.initDrawing();          
         }
 
         private void fillListWithDesigns(object sender, TennisEventArgs args) {
@@ -127,7 +126,11 @@ namespace Tennis.ApplicationGUI
                 Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton((string)args.DesignData[0], (string)args.DesignData[1], 
                     (string)args.DesignData[2], true, OnDesignItemSelected))));
                 Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
-                Dispatcher.BeginInvoke(new Action(() => currentDesignReportsView.Visibility = Visibility.Hidden));  
+                Dispatcher.BeginInvoke(new Action(() => currentDesignReportsView.Visibility = Visibility.Hidden));
+                Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
+                Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
+                Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
+                Dispatcher.BeginInvoke(new Action(() => btnReports.IsEnabled = true));
             }
             else
             {                
@@ -135,12 +138,7 @@ namespace Tennis.ApplicationGUI
 
                 Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
                 Dispatcher.BeginInvoke(new Action(() => btnEditDesign.IsEnabled = true));               
-            }
-
-            Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
-            Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
-            Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
-            Dispatcher.BeginInvoke(new Action(() => btnReports.IsEnabled = true));           
+            }           
         }
 
         private void rdbDrawFire_Checked(object sender, RoutedEventArgs e)
@@ -301,12 +299,16 @@ namespace Tennis.ApplicationGUI
             lblFireDate.Content = ApplicationController.Instance().getCurrentDesignFireDurationDate();
             lblArcadeDuration.Content = (ApplicationController.Instance().getCurrentDesignArcadeDuration());
             lblArcadeDate.Content = ApplicationController.Instance().getCurrentDesignArcadeDurationDate();
-
-            Console.WriteLine("finished drawing");
+           
             designerView.root.Children.Clear();
             Image finishedDesign = new Image();
             finishedDesign.Source = args.DesignBitmap;
             designerView.AddShape(finishedDesign);
+
+            btnNewDesign.IsEnabled = true;
+            waitingProgress.Visibility = Visibility.Hidden;
+            waitingProgress.IsIndeterminate = false;
+            btnReports.IsEnabled = true;
         }
 
         private void btnDrawShape_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

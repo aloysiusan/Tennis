@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace Tennis.ApplicationGUI
 {
@@ -16,7 +17,7 @@ namespace Tennis.ApplicationGUI
         public static readonly double SCALE = DPI / 96;
 
         public static WriteableBitmap CreateWriteableBitmapFromCanvas(Canvas pCanvas)
-        {         
+        {
             Size size = new Size(pCanvas.ActualWidth, pCanvas.ActualHeight);
 
             pCanvas.Measure(size);
