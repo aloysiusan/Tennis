@@ -128,7 +128,7 @@ namespace Tennis.ApplicationGUI
 
         private void drawEllipse(TEllipse pEllipse)
         {
-            EllipseGeometry newEllipse = new EllipseGeometry(new Point(pEllipse.radiusPoint.XPosition, pEllipse.radiusPoint.YPosition), pEllipse.radius, pEllipse.radius);
+            EllipseGeometry newEllipse = new EllipseGeometry(new Point(pEllipse.radiusPoint.XPosition, pEllipse.radiusPoint.YPosition), pEllipse.radius - pEllipse.thickness*0.6, pEllipse.radius - pEllipse.thickness*0.6);
             Path path = new Path();
 
             path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
@@ -151,33 +151,40 @@ namespace Tennis.ApplicationGUI
 
         private void paint(TPoint fillPoint)
         {
-            fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight);
+            fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight); // 4 Tiempos
 
-            Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); //Debe multiplicarse por una constante K tal que K = DPI/96 para que pinte el area correcta
-            //debido a la escala utilizada para crear el bitmap.
-            Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor);
-            Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor);
-            try
+            Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); // 7 Tiempos
+            Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor); // 4 Tiempos
+            Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor); // 4 Tiempos
+
+            Stack<Point> StackPoint = new Stack<Point>(); // 3 Tiempos
+            StackPoint.Push(pt); // 3 Tiempos
+            while (StackPoint.Count != 0) // N
             {
-                Stack<Point> StackPoint = new Stack<Point>();
-                StackPoint.Push(pt);
-                while (StackPoint.Count != 0)
+                pt = StackPoint.Pop(); // 3 Tiempos
+                Color CurrentColor = GetPixelColor((int)pt.X, (int)pt.Y); //5 tiempos
+                if (ColorMatch(CurrentColor, oldColor)) // 5 Tiempos
                 {
-                    pt = StackPoint.Pop();
-                    Color CurrentColor = GetPixelColor((int)pt.X, (int)pt.Y);
-                    if (ColorMatch(CurrentColor, oldColor))
+                    Random rnd = new Random(); // 3 Tiempos
+                    SetPixelColor((int)pt.X, (int)pt.Y, newColor); // 4 Tiempos
+                    for (int i = 0; i < 8; i++) // 1 + 8*3 Tiempos
                     {
-                        Random rnd = new Random();
-                        SetPixelColor((int)pt.X, (int)pt.Y, newColor);
-                        for (int i = 0; i < 12; i++)
-                        {
-                            StackPoint.Push(new Point(pt.X + rnd.Next(3) - 1, pt.Y + rnd.Next(3) - 1));
-                        }
+                        StackPoint.Push(new Point(pt.X + rnd.Next(3) - 1, pt.Y + rnd.Next(3) - 1)); // 16 Tiempos
                     }
                 }
-            }
-            catch (Exception ex) { Console.WriteLine(ex); }
+            }            
         }
+
+        /* Calculo O(n) y f(n)
+         * 
+         * 4 + 7 + 4 + 4 + 3 + 3 + N(3 + 5 + 5 + 3 + 4 + 1 + 8*3*16)
+         * = 25 + N(21 + 8*3*16)
+         * = 25 + 384N
+         * 
+         * f(n) = 25 + 384n
+         * 
+         * Duracion: O(n)
+         */
 
         private bool ColorMatch(Color a, Color b)
         {

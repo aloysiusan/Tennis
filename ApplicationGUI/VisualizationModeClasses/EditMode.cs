@@ -167,16 +167,16 @@ namespace Tennis.ApplicationGUI
             newLine = null;
         }
 
-        private void drawEllipse(TEllipse pElipse) 
+        private void drawEllipse(TEllipse pEllipse) 
         {
             Ellipse newEllipse = new Ellipse();
-            newEllipse.Height = pElipse.radius*2;
-            newEllipse.Width = pElipse.radius*2;
-            newEllipse.StrokeThickness = pElipse.thickness;
-            newEllipse.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pElipse.fillColor));
-            newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pElipse.borderColor));
-            Canvas.SetLeft(newEllipse, pElipse.radiusPoint.XPosition);
-            Canvas.SetTop(newEllipse, pElipse.radiusPoint.YPosition);
+            newEllipse.Height = pEllipse.radius*2;
+            newEllipse.Width = pEllipse.radius*2;
+            newEllipse.StrokeThickness = pEllipse.thickness;
+            newEllipse.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.fillColor));
+            newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
+            Canvas.SetLeft(newEllipse, pEllipse.radiusPoint.XPosition - pEllipse.radius);
+            Canvas.SetTop(newEllipse, pEllipse.radiusPoint.YPosition - pEllipse.radius);
             mainDesigner.AddShape(newEllipse);
 
         }

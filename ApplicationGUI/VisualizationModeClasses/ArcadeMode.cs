@@ -129,8 +129,8 @@ namespace Tennis.ApplicationGUI
             newEllipse.StrokeThickness = pEllipse.thickness;
             newEllipse.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.fillColor));
             newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
-            Canvas.SetLeft(newEllipse, pEllipse.radiusPoint.XPosition - pEllipse.radius / 2);
-            Canvas.SetTop(newEllipse, pEllipse.radiusPoint.YPosition - pEllipse.radius / 2);
+            Canvas.SetLeft(newEllipse, pEllipse.radiusPoint.XPosition - pEllipse.radius);
+            Canvas.SetTop(newEllipse, pEllipse.radiusPoint.YPosition - pEllipse.radius);
             mainDesigner.AddShape(newEllipse);
         }
 
@@ -145,32 +145,39 @@ namespace Tennis.ApplicationGUI
 
         private void paint(TPoint fillPoint)
         {
-            fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight);
+            fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight); //4 Tiempos
 
-            Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); //Debe multiplicarse por una constante K tal que K = DPI/96 para que pinte el area correcta
-            //debido a la escala utilizada para crear el bitmap.
-            Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor);
-            Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor);
-            try
+            Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); // 7 Tiempos
+            Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor); // 4 Tiempos
+            Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor); // 4 Tiempos
+
+            Stack<Point> StackPoint = new Stack<Point>(); // 3 Tiempos
+            StackPoint.Push(pt); // 3 Tiempos
+            while (StackPoint.Count != 0) // N
             {
-                Stack<Point> StackPoint = new Stack<Point>();
-                StackPoint.Push(pt);
-                while (StackPoint.Count != 0)
+                pt = StackPoint.Pop(); // 3 Tiempos
+                Color CurrentColor = GetPixelColor((int)pt.X, (int)pt.Y); // 5 Tiempos
+                if (ColorMatch(CurrentColor, oldColor)) // 5 Tiempos
                 {
-                    pt = StackPoint.Pop();
-                    Color CurrentColor = GetPixelColor((int)pt.X, (int)pt.Y);
-                    if (ColorMatch(CurrentColor, oldColor))
-                    {
-                        SetPixelColor((int)pt.X, (int)pt.Y, newColor);
-                        StackPoint.Push(new Point(pt.X - 1, pt.Y));
-                        StackPoint.Push(new Point(pt.X + 1, pt.Y));
-                        StackPoint.Push(new Point(pt.X, pt.Y - 1));
-                        StackPoint.Push(new Point(pt.X, pt.Y + 1));
-                    }
+                    SetPixelColor((int)pt.X, (int)pt.Y, newColor); // 4 Tiempos
+                    StackPoint.Push(new Point(pt.X - 1, pt.Y)); // 7 Tiempos
+                    StackPoint.Push(new Point(pt.X + 1, pt.Y)); // 7 Tiempos
+                    StackPoint.Push(new Point(pt.X, pt.Y - 1)); // 7 Tiempos
+                    StackPoint.Push(new Point(pt.X, pt.Y + 1)); // 7 Tiempos
                 }
             }
-            catch (Exception ex) { Console.WriteLine(ex); }
         }
+
+        /* Calculo O(n) y f(n)
+         * 
+         * 4 + 7 + 4 + 4 + 3 + 3 + N(3 + 5 + 5 + 4 + 7 + 7 + 7 + 7)
+         * = 25 + N(45)
+         * = 25 + 45N
+         * 
+         * f(n) = 25 + 45n
+         * 
+         * Duracion: O(n)
+         */
 
         private bool ColorMatch(Color a, Color b)
         {
