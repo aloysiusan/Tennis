@@ -8,7 +8,7 @@ using Tennis.Shapes;
 using Tennis.ApplicationLogic;
 using System.Windows.Threading;
 
-namespace Tennis.ApplicationGUI
+namespace Tennis.ApplicationGUI.VisualizationModes
 {
     public abstract class VisualizationMode
     {
@@ -28,8 +28,8 @@ namespace Tennis.ApplicationGUI
             else if (pSelectedMode == Mode.ARCADE)
             {
                 mainController.getCurrentDesign().adjustPoints(pDesigner.ActualWidth, pDesigner.ActualHeight);
-                instance = ArcadeMode.createInstance(mainController.getCurrentDesign(), pDesigner);
-                ArcadeMode.Instance().finishDrawingDesign_EventHandler += mainController.OnDesignFinishedDrawing;
+                instance = ArcadeMode.createNewInstance(mainController.getCurrentDesign(), pDesigner);
+                ArcadeMode.getInstance().finishDrawingDesign_EventHandler += mainController.OnDesignFinishedDrawing;
             }
             else
             {

@@ -18,6 +18,7 @@ using Tennis.ApplicationLogic;
 using Tennis.TEventArgs;
 using Tennis.Parse.Rows;
 using System.Threading.Tasks;
+using Tennis.ApplicationGUI.VisualizationModes;
 
 namespace Tennis.ApplicationGUI
 {

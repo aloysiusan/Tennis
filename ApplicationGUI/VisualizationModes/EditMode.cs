@@ -12,7 +12,7 @@ using System.Windows.Shapes;
 using Tennis.Design;
 using Tennis.Shapes;
 
-namespace Tennis.ApplicationGUI
+namespace Tennis.ApplicationGUI.VisualizationModes
 {
     public class EditMode : VisualizationMode
     {

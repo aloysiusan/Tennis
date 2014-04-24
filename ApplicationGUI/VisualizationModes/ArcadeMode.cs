@@ -14,61 +14,61 @@ using Tennis.Design;
 using Tennis.Shapes;
 using Tennis.TEventArgs;
 
-namespace Tennis.ApplicationGUI
+namespace Tennis.ApplicationGUI.VisualizationModes
 {
     class ArcadeMode : VisualizationMode
     {
-        private TDesign currentDesign;
-        private Designer mainDesigner;
-        private WriteableBitmap mainBitmap;
-        private static ArcadeMode _currentInstance;
-        private Stopwatch Watcher;
+        private TDesign _CurrentDesign;
+        private Designer _MainDesigner;
+        private WriteableBitmap _MainBitmap;
+        private static ArcadeMode CurrentInstance;
+        private Stopwatch _Watcher;
 
         public event EventHandler<TennisEventArgs> finishDrawingDesign_EventHandler;
 
-        public static ArcadeMode createInstance(TDesign pDesign, Designer pDesigner)
+        public static ArcadeMode createNewInstance(TDesign pDesign, Designer pDesigner)
         {
-            _currentInstance = new ArcadeMode(pDesign, pDesigner);
-            return _currentInstance;
+            CurrentInstance = new ArcadeMode(pDesign, pDesigner);
+            return CurrentInstance;
         }
 
-        public static ArcadeMode Instance()
+        public static ArcadeMode getInstance()
         {
-            return _currentInstance;
+            return CurrentInstance;
         }
 
         private ArcadeMode(TDesign pDesign, Designer pDesigner)
         {
-            currentDesign = pDesign;
-            mainDesigner = pDesigner;
-            Watcher = new Stopwatch();
+            _CurrentDesign = pDesign;
+            _MainDesigner = pDesigner;
+            _Watcher = new Stopwatch();
         }
 
         public override void initDrawing()
         {           
-            Watcher.Start();
+            _Watcher.Start();
 
-            this.drawBorderLines(currentDesign.designLines);
-            this.drawBorderArcs(currentDesign.designArcs);
-            this.drawLine(currentDesign.baseLine);
-            this.drawCustomLines(currentDesign.customLines);
-            this.drawCustomEllipses(currentDesign.customEllipses);
-            mainBitmap = BitmapConverter.CreateWriteableBitmapFromCanvas(mainDesigner.root);
+            this.drawBorderLines(_CurrentDesign.designLines);
+            this.drawBorderArcs(_CurrentDesign.designArcs);
+            this.drawLine(_CurrentDesign.baseLine);
+            this.drawCustomLines(_CurrentDesign.customLines);
+            this.drawCustomEllipses(_CurrentDesign.customEllipses);
+            _MainBitmap = BitmapConverter.CreateWriteableBitmapFromCanvas(_MainDesigner.root);
 
-            foreach (TPoint fillPoint in currentDesign.fillIndicators)
+            foreach (TPoint fillPoint in _CurrentDesign.fillIndicators)
             {
-                this.paint(fillPoint);
+                this.fillArea(fillPoint);
             }
 
-            Watcher.Stop();
+            _Watcher.Stop();
 
             EventHandler<TennisEventArgs> handler = finishDrawingDesign_EventHandler;
             if (handler != null)
             {
                 TennisEventArgs args = new TennisEventArgs();
-                args.DrawDuration = (float)Watcher.Elapsed.TotalMilliseconds;
+                args.DrawDuration = (float)_Watcher.Elapsed.TotalMilliseconds;
                 args.VisualizationMode = TennisEventArgs.Mode.ARCADE;
-                args.DesignBitmap = mainBitmap;
+                args.DesignBitmap = _MainBitmap;
                 handler(this, args);
             }
 
@@ -92,7 +92,7 @@ namespace Tennis.ApplicationGUI
             line.Y2 = pLine.endPoint.YPosition + TLine.POSITION_OFFSET;
             line.StrokeThickness = pLine.thickness;
 
-            mainDesigner.AddShape(line);
+            _MainDesigner.AddShape(line);
         }
 
         private void drawBorderArcs(TArc[] pArcs)
@@ -109,7 +109,7 @@ namespace Tennis.ApplicationGUI
                 path.Data = pathGeometry;
                 path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc.color));
                 path.StrokeThickness = arc.thickness;
-                mainDesigner.AddShape(path);
+                _MainDesigner.AddShape(path);
             }
         }
 
@@ -131,7 +131,7 @@ namespace Tennis.ApplicationGUI
             newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
             Canvas.SetLeft(newEllipse, pEllipse.radiusPoint.XPosition - pEllipse.radius);
             Canvas.SetTop(newEllipse, pEllipse.radiusPoint.YPosition - pEllipse.radius);
-            mainDesigner.AddShape(newEllipse);
+            _MainDesigner.AddShape(newEllipse);
         }
 
 
@@ -143,9 +143,9 @@ namespace Tennis.ApplicationGUI
             }
         }
 
-        private void paint(TPoint fillPoint)
+        private void fillArea(TPoint fillPoint)
         {
-            fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight); //4 Tiempos
+            fillPoint.adjustPosition(_MainDesigner.ActualWidth, _MainDesigner.ActualHeight); //4 Tiempos
 
             Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); // 7 Tiempos
             Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor); // 4 Tiempos
@@ -156,10 +156,10 @@ namespace Tennis.ApplicationGUI
             while (StackPoint.Count != 0) // N
             {
                 pt = StackPoint.Pop(); // 3 Tiempos
-                Color CurrentColor = GetPixelColor((int)pt.X, (int)pt.Y); // 5 Tiempos
-                if (ColorMatch(CurrentColor, oldColor)) // 5 Tiempos
-                {
-                    SetPixelColor((int)pt.X, (int)pt.Y, newColor); // 4 Tiempos
+                Color CurrentColor = getPixelColor((int)pt.X, (int)pt.Y); // 5 Tiempos
+                if (isColorMatch(CurrentColor, oldColor)) // 5 Tiempos
+                {   
+                    setPixelColor((int)pt.X, (int)pt.Y, newColor); // 4 Tiempos
                     StackPoint.Push(new Point(pt.X - 1, pt.Y)); // 7 Tiempos
                     StackPoint.Push(new Point(pt.X + 1, pt.Y)); // 7 Tiempos
                     StackPoint.Push(new Point(pt.X, pt.Y - 1)); // 7 Tiempos
@@ -179,24 +179,24 @@ namespace Tennis.ApplicationGUI
          * Duracion: O(n)
          */
 
-        private bool ColorMatch(Color a, Color b)
+        private bool isColorMatch(Color a, Color b)
         {
             int diff = 10;
             return (a.A - diff < b.A && a.A + diff > b.A && a.R - diff < b.R && a.R + diff > b.R &&
                         a.G - diff < b.G && a.G + diff > b.G && a.B - diff < b.B && a.B + diff > b.B);
         }
 
-        private Color GetPixelColor(int x, int y)
+        private Color getPixelColor(int x, int y)
         {
             var pixels = new byte[4];
-            mainBitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
+            _MainBitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
             return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
         }
 
-        private void SetPixelColor(int x, int y, Color newColor)
+        private void setPixelColor(int x, int y, Color newColor)
         {
             var pixels = new byte[] { newColor.B, newColor.G, newColor.R, newColor.A }; // Blue Green Red Alpha
-            mainBitmap.WritePixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
+            _MainBitmap.WritePixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
         }
     }
 }

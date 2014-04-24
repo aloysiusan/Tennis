@@ -15,7 +15,7 @@ using Tennis.Design;
 using Tennis.Shapes;
 using Tennis.TEventArgs;
 
-namespace Tennis.ApplicationGUI
+namespace Tennis.ApplicationGUI.VisualizationModes
 {
     public class FireMode : VisualizationMode
     {
@@ -146,7 +146,6 @@ namespace Tennis.ApplicationGUI
             {
                 drawEllipse(ellipse);
             }
-            Console.WriteLine("ellipses painted");
         }
 
         private void paint(TPoint fillPoint)

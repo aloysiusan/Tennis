@@ -71,10 +71,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BitmapConverter.cs" />
-    <Compile Include="VisualizationModeClasses\ArcadeMode.cs" />
-    <Compile Include="VisualizationModeClasses\EditMode.cs" />
-    <Compile Include="VisualizationModeClasses\FireMode.cs" />
-    <Compile Include="VisualizationModeClasses\VisualizationMode.cs" />
+    <Compile Include="VisualizationModes\ArcadeMode.cs" />
+    <Compile Include="VisualizationModes\EditMode.cs" />
+    <Compile Include="VisualizationModes\FireMode.cs" />
+    <Compile Include="VisualizationModes\VisualizationMode.cs" />
     <Page Include="DesignButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
