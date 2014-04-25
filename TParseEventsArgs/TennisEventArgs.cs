@@ -22,7 +22,7 @@ namespace Tennis.TEventArgs
         private List<object> _DesignsList;
         private float _DrawDuration;
         private Mode _VisualizationMode;
-        private WriteableBitmap _designBitmap;
+        private WriteableBitmap _DesignBitmap;
 
         public String ParseJSONData
         {
@@ -74,8 +74,8 @@ namespace Tennis.TEventArgs
 
         public WriteableBitmap DesignBitmap
         {
-            get { return _designBitmap; }
-            set { _designBitmap = value; }
+            get { return _DesignBitmap; }
+            set { _DesignBitmap = value; }
         }
 
         public Mode VisualizationMode

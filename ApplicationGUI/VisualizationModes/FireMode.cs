@@ -49,14 +49,14 @@ namespace Tennis.ApplicationGUI.VisualizationModes
         {
             Watcher.Start();
 
-            this.drawBorderLines(currentDesign.designLines);
-            this.drawBorderArcs(currentDesign.designArcs);
-            this.drawLine(currentDesign.baseLine);
-            this.drawCustomLines(currentDesign.customLines);
-            this.drawCustomEllipses(currentDesign.customEllipses);
+            this.drawBorderLines(currentDesign.BorderLines);
+            this.drawBorderArcs(currentDesign.BorderArcs);
+            this.drawLine(currentDesign.BaseLine);
+            this.drawCustomLines(currentDesign.CustomLines);
+            this.drawCustomEllipses(currentDesign.CustomEllipses);
             mainBitmap = BitmapConverter.CreateWriteableBitmapFromCanvas(mainDesigner.root);
 
-            foreach (TPoint fillPoint in currentDesign.fillIndicators)
+            foreach (TPoint fillPoint in currentDesign.FillIndicators)
             {
                 this.paint(fillPoint);        
             }

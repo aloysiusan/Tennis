@@ -22,45 +22,112 @@ namespace Tennis.Design
     * D = 90%
     * E = 90%
     */
+
     public class TDesign
     {
-        public TPoint pointA;
-        public TPoint pointB;
-        public TPoint pointC;
-        public TPoint pointD;
-        public TPoint pointE;
+        private TPoint _PointA;
+        private TPoint _PointB;
+        private TPoint _PointC;
+        private TPoint _PointD;
+        private TPoint _PointE;
 
-        public TLine[] designLines;
-        public List<TLine> customLines;
+        private TLine[] _BorderLines;
+        private List<TLine> _CustomLines;
 
-        public TLine baseLine; //Suela
-        public TArc[] designArcs;
+        private TLine _BaseLine;
+        private TArc[] _BorderArcs;
 
-        public List<TEllipse> customEllipses;
+        private List<TEllipse> _CustomEllipses;
 
-        public List<TPoint> fillIndicators;
+        private List<TPoint> _FillIndicators;
+
+        public TPoint PointA
+        {
+            get { return _PointA; }
+            set { _PointA = value; }
+        }
+
+        public TPoint PointB
+        {
+            get { return _PointB; }
+            set { _PointB = value; }
+        }
+
+        public TPoint PointC
+        {
+            get { return _PointC; }
+            set { _PointC = value; }
+        }
+
+        public TPoint PointD
+        {
+            get { return _PointD; }
+            set { _PointD = value; }
+        }
+
+        public TPoint PointE
+        {
+            get { return _PointE; }
+            set { _PointE = value; }
+        }
+
+        public TLine[] BorderLines
+        {
+            get { return _BorderLines; }
+            set { _BorderLines = value; }
+        }
+
+        public List<TLine> CustomLines
+        {
+            get { return _CustomLines; }
+            set { _CustomLines = value; }
+        }
+
+        public TLine BaseLine
+        {
+            get { return _BaseLine; }
+            set { _BaseLine = value; }
+        }
+
+        public TArc[] BorderArcs
+        {
+            get {return _BorderArcs;}
+            set { _BorderArcs = value; }
+        }
+
+        public List<TEllipse> CustomEllipses
+        {
+            get { return _CustomEllipses; }
+            set { _CustomEllipses = value; }
+        }
+
+        public List<TPoint> FillIndicators
+        {
+            get { return _FillIndicators; }
+            set { _FillIndicators = value; }
+        }
 
         public TDesign( double pContainerWidth, double pContainerHeight)
         {
-            pointA = new TPoint('a', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointA_XPosition, TPoint.DefaultPosition.DefaultPointA_YPosition);
-            pointB = new TPoint('b', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointB_XPosition, TPoint.DefaultPosition.DefaultPointB_YPosition);
-            pointC = new TPoint('c', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointC_XPosition, TPoint.DefaultPosition.DefaultPointC_YPosition);
-            pointD = new TPoint('d', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointD_XPosition, TPoint.DefaultPosition.DefaultPointD_YPosition);
-            pointE = new TPoint('e', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointE_XPosition, TPoint.DefaultPosition.DefaultPointE_YPosition);
+            _PointA = new TPoint('a', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointA_XPosition, TPoint.DefaultPosition.DefaultPointA_YPosition);
+            _PointB = new TPoint('b', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointB_XPosition, TPoint.DefaultPosition.DefaultPointB_YPosition);
+            _PointC = new TPoint('c', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointC_XPosition, TPoint.DefaultPosition.DefaultPointC_YPosition);
+            _PointD = new TPoint('d', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointD_XPosition, TPoint.DefaultPosition.DefaultPointD_YPosition);
+            _PointE = new TPoint('e', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointE_XPosition, TPoint.DefaultPosition.DefaultPointE_YPosition);
 
-            designLines = new TLine[2];
-            designArcs = new  TArc[2];
-            customLines = new List<TLine>();
-            customEllipses = new List<TEllipse>();
-            fillIndicators = new List<TPoint>();
+            _BorderLines = new TLine[2];
+            _BorderArcs = new  TArc[2];
+            _CustomLines = new List<TLine>();
+            _CustomEllipses = new List<TEllipse>();
+            _FillIndicators = new List<TPoint>();
 
-            designLines[0] = new TLine(pointB, pointC);
-            designLines[1] = new TLine(pointC, pointD);
+            _BorderLines[0] = new TLine(_PointB, _PointC);
+            _BorderLines[1] = new TLine(_PointC, _PointD);
             
-            designArcs[0] = new TArc(pointE, pointA, false);
-            designArcs[1] = new TArc(pointA, pointB, false);
+            _BorderArcs[0] = new TArc(_PointE, _PointA, false);
+            _BorderArcs[1] = new TArc(_PointA, _PointB, true);
 
-            baseLine = new TLine(pointE, pointD);
+            _BaseLine = new TLine(_PointE, _PointD);
         }
 
         public TPoint getPointWithID(char pID)
@@ -68,15 +135,15 @@ namespace Tennis.Design
             switch (pID)
             {
                 case 'a':
-                    return pointA;
+                    return _PointA;
                 case 'b':
-                    return pointB;
+                    return _PointB;
                 case 'c':
-                    return pointC;
+                    return _PointC;
                 case 'd':
-                    return pointD;
+                    return _PointD;
                 case 'e':
-                    return pointE;
+                    return _PointE;
                 default:
                     return null;
             }
@@ -84,80 +151,80 @@ namespace Tennis.Design
 
         public void setBorderThickness(int pValue)
         {
-            designLines[0].thickness = pValue;
-            designLines[1].thickness = pValue;
-            designArcs[0].thickness = pValue;
-            designArcs[1].thickness = pValue;
+            _BorderLines[0].thickness = pValue;
+            _BorderLines[1].thickness = pValue;
+            _BorderArcs[0].thickness = pValue;
+            _BorderArcs[1].thickness = pValue;
         }
 
         public void setBorderColor(String pColorValue)
         {
-            designLines[0].color = pColorValue;
-            designLines[1].color = pColorValue;
-            designArcs[0].color = pColorValue;
-            designArcs[1].color = pColorValue;
+            _BorderLines[0].color = pColorValue;
+            _BorderLines[1].color = pColorValue;
+            _BorderArcs[0].color = pColorValue;
+            _BorderArcs[1].color = pColorValue;
         }
 
         public void setBaseLineThickness(int pValue)
         {
-            baseLine.thickness = pValue;
+            _BaseLine.thickness = pValue;
         }
 
         public void setBaseLineColor(String pColorValue)
         {
-            baseLine.color = pColorValue;
+            _BaseLine.color = pColorValue;
         }
 
         public void adjustPoints(double pRelativeWidth, double pRelativeHeight)
         {
-            pointA.adjustPosition(pRelativeWidth, pRelativeHeight);
-            pointB.adjustPosition(pRelativeWidth, pRelativeHeight);
-            pointC.adjustPosition(pRelativeWidth, pRelativeHeight);
-            pointD.adjustPosition(pRelativeWidth, pRelativeHeight);
-            pointE.adjustPosition(pRelativeWidth, pRelativeHeight);
+            _PointA.adjustPosition(pRelativeWidth, pRelativeHeight);
+            _PointB.adjustPosition(pRelativeWidth, pRelativeHeight);
+            _PointC.adjustPosition(pRelativeWidth, pRelativeHeight);
+            _PointD.adjustPosition(pRelativeWidth, pRelativeHeight);
+            _PointE.adjustPosition(pRelativeWidth, pRelativeHeight);
 
-            designLines[0].startPoint = pointB;
-            designLines[0].endPoint = pointC;
-            designLines[1].startPoint = pointC;
-            designLines[1].endPoint = pointD;
+            _BorderLines[0].startPoint = _PointB;
+            _BorderLines[0].endPoint = _PointC;
+            _BorderLines[1].startPoint = _PointC;
+            _BorderLines[1].endPoint = _PointD;
 
-            designArcs[0].startPoint = pointE;
-            designArcs[0].endPoint = pointA;
-            designArcs[1].startPoint = pointA;
-            designArcs[1].endPoint = pointB;
+            _BorderArcs[0].startPoint = _PointE;
+            _BorderArcs[0].endPoint = _PointA;
+            _BorderArcs[1].startPoint = _PointA;
+            _BorderArcs[1].endPoint = _PointB;
 
-            baseLine.startPoint = pointE;
-            baseLine.endPoint = pointD;
+            _BaseLine.startPoint = _PointE;
+            _BaseLine.endPoint = _PointD;
         }
 
         public TDesign Clone()
         {
             TDesign thisClone = new TDesign(0, 0);
-            thisClone.pointA = this.pointA.Clone();
-            thisClone.pointB = this.pointB.Clone();
-            thisClone.pointC = this.pointC.Clone();
-            thisClone.pointD = this.pointD.Clone();
-            thisClone.pointE = this.pointE.Clone();
+            thisClone._PointA = this._PointA.Clone();
+            thisClone._PointB = this._PointB.Clone();
+            thisClone._PointC = this._PointC.Clone();
+            thisClone._PointD = this._PointD.Clone();
+            thisClone._PointE = this._PointE.Clone();
 
-            thisClone.designLines[0] = this.designLines[0].Clone(thisClone.pointB, thisClone.pointC);
-            thisClone.designLines[1] = this.designLines[1].Clone(thisClone.pointC, thisClone.pointD);
+            thisClone._BorderLines[0] = this._BorderLines[0].Clone(thisClone._PointB, thisClone._PointC);
+            thisClone._BorderLines[1] = this._BorderLines[1].Clone(thisClone._PointC, thisClone._PointD);
 
-            thisClone.designArcs[0] = this.designArcs[0].Clone(thisClone.pointE, thisClone.pointA);
-            thisClone.designArcs[1] = this.designArcs[1].Clone(thisClone.pointA, thisClone.pointB);
+            thisClone._BorderArcs[0] = this._BorderArcs[0].Clone(thisClone._PointE, thisClone._PointA);
+            thisClone._BorderArcs[1] = this._BorderArcs[1].Clone(thisClone._PointA, thisClone._PointB);
 
-            thisClone.baseLine = this.baseLine.Clone(thisClone.pointE, thisClone.pointD);
-
-            foreach(TLine line in this.customLines){
-                thisClone.customLines.Add(line.Clone(line.startPoint.Clone(),line.endPoint.Clone()));
+            thisClone._BaseLine = this._BaseLine.Clone(thisClone._PointE, thisClone._PointD);
+            
+            foreach(TLine line in this._CustomLines){
+                thisClone._CustomLines.Add(line.Clone(line.startPoint.Clone(),line.endPoint.Clone()));
             }      
      
-            foreach(TEllipse ellipse in this.customEllipses){
-                thisClone.customEllipses.Add(ellipse.Clone(ellipse.radiusPoint));
+            foreach(TEllipse ellipse in this._CustomEllipses){
+                thisClone._CustomEllipses.Add(ellipse.Clone(ellipse.radiusPoint));
             }
 
-            foreach (TPoint fillPoint in this.fillIndicators)
+            foreach (TPoint fillPoint in this._FillIndicators)
             {
-                thisClone.fillIndicators.Add(fillPoint.Clone());
+                thisClone._FillIndicators.Add(fillPoint.Clone());
             }
 
             return thisClone;

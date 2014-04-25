@@ -61,11 +61,11 @@ namespace Tennis.ApplicationGUI.VisualizationModes
         public override void initDrawing()
         {
             mainDesigner.root.Children.Clear();
-            this.drawBorderLines(currentDesign.designLines);
-            this.drawBorderArcs(currentDesign.designArcs);
-            this.drawLine(currentDesign.baseLine);
-            this.drawCustomLines(currentDesign.customLines);
-            this.drawCustomEllipses(currentDesign.customEllipses);
+            this.drawBorderLines(currentDesign.BorderLines);
+            this.drawBorderArcs(currentDesign.BorderArcs);
+            this.drawLine(currentDesign.BaseLine);
+            this.drawCustomLines(currentDesign.CustomLines);
+            this.drawCustomEllipses(currentDesign.CustomEllipses);
 
             this.drawPoint(currentDesign.getPointWithID('a'));
             this.drawPoint(currentDesign.getPointWithID('b'));
@@ -73,7 +73,7 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             this.drawPoint(currentDesign.getPointWithID('d'));
             this.drawPoint(currentDesign.getPointWithID('e'));
 
-            this.drawFillPoints(currentDesign.fillIndicators);
+            this.drawFillPoints(currentDesign.FillIndicators);
 
         }
 
@@ -163,7 +163,7 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             TLine newTLine = new TLine(startPoint, endPoint);
             newTLine.color = newLinesColor;
             newTLine.thickness = newLinesThickness;
-            currentDesign.customLines.Add(newTLine);
+            currentDesign.CustomLines.Add(newTLine);
             newLine = null;
         }
 
@@ -188,7 +188,7 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             fillPoint.fillColor = paintColor;
             Color oldColor = GetPixelColor(BitmapConverter.CreateWriteableBitmapFromCanvas(mainDesigner.root), (int)p.X, (int)p.Y);
             fillPoint.oldColor = "#" + oldColor.R.ToString("X2") + oldColor.G.ToString("X2") + oldColor.B.ToString("X2");
-            currentDesign.fillIndicators.Add(fillPoint);
+            currentDesign.FillIndicators.Add(fillPoint);
             drawPoint(fillPoint);
         }
 
@@ -324,7 +324,7 @@ namespace Tennis.ApplicationGUI.VisualizationModes
                 newEllipse.thickness = ellipseThickness;
                 newEllipse.fillColor = ellipseFillColor;
                 newEllipse.borderColor = ellipseBorderColor;
-                currentDesign.customEllipses.Add(newEllipse);
+                currentDesign.CustomEllipses.Add(newEllipse);
 
                 drawEllipse(newEllipse);
                 mainDesigner.Cursor = Cursors.Arrow;
