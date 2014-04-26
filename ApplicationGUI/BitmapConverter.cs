@@ -13,7 +13,7 @@ namespace Tennis.ApplicationGUI
 {
     class BitmapConverter
     {
-        static private readonly double DPI = 180;
+        static private readonly double DPI = 360;
         public static readonly double SCALE = DPI / 96;
 
         public static WriteableBitmap CreateWriteableBitmapFromCanvas(Canvas pCanvas)

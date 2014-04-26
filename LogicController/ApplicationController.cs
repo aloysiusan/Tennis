@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Tennis.TEventArgs;
 using Tennis.Design;
-using Tennis.Parse.Rows;
 
 namespace Tennis.ApplicationLogic
 {   
@@ -24,7 +23,7 @@ namespace Tennis.ApplicationLogic
 
         private ApplicationController() {
             ParseDataController.Instance().designsFinishedDownloading_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignsRecieved);
-            ParseDataController.Instance().designCreationResponseRecieved_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationResponseRecieved);
+            ParseDataController.Instance().designCreationFailedResponseRecieved_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignCreationFailedResponseRecieved);
             ParseDataController.Instance().designLoadResponseRecieved_EventHandler += new EventHandler<TennisEventArgs>(this.OnDesignDataRecieved);
         }
 
@@ -78,11 +77,11 @@ namespace Tennis.ApplicationLogic
             EventHandler<TennisEventArgs> handler = designsReady_EventHandler;
             if (handler != null)
             {
-                ParseRow[] designsList = (ParseRow[])args.ParseObjectData;
+                DesignObject[] designsList = (DesignObject[])args.ParseObjectData;
                 List<Object> formatedList = new List<object>();
                 for (int i = 0; i < designsList.Length;i++)
                 {
-                    formatedList.Add(new string[] { designsList[i].id, designsList[i].name, designsList[i].updatedAt});
+                    formatedList.Add(new string[] { designsList[i].ID, designsList[i].Name, designsList[i].UpdatedAt});
                 }
                 args.DesignsList = formatedList;
                 handler(this, args);
@@ -94,7 +93,7 @@ namespace Tennis.ApplicationLogic
             ParseDataController.Instance().createNewDesign(pName);
         }
 
-        public void OnDesignCreationResponseRecieved(object sender, TennisEventArgs args)
+        public void OnDesignCreationFailedResponseRecieved(object sender, TennisEventArgs args)
         {            
             EventHandler<TennisEventArgs> handler = designCreationStatusFailed_EventHandler;
             if (handler != null)
@@ -113,9 +112,9 @@ namespace Tennis.ApplicationLogic
             EventHandler<TennisEventArgs> handler = designDataReady_EventHandler;
             if (handler != null)
             {                
-                ParseRow currentDesignRow = (ParseRow)args.ParseObjectData;
-                args.DesignData = new object[8] { currentDesignRow.id, currentDesignRow.name, currentDesignRow.updatedAt, currentDesignRow.data, 
-                    currentDesignRow.fireDuration, currentDesignRow.fireDate, currentDesignRow.arcadeDuration, currentDesignRow.arcadeDate};
+                DesignObject currentDesignObject = (DesignObject)args.ParseObjectData;
+                args.DesignData = new object[8] { currentDesignObject.ID, currentDesignObject.Name, currentDesignObject.UpdatedAt, currentDesignObject.DesignData, 
+                    currentDesignObject.FireModeDrawingDuration, currentDesignObject.FireModeDrawingDuration, currentDesignObject.ArcadeModeDrawingDuration, currentDesignObject.ArcadeModeBestDurationDate};
                 currentDesignData = args.DesignData;
                 handler(this, args);           
             }

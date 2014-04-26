@@ -9,15 +9,11 @@ using Tennis.TEventArgs;
 
 namespace Tennis.Parse.Controller
 {
+    /// <summary>
+    /// Data access controller for Parse Cloud service database.
+    /// </summary>
     public class ParseDataAccess
     {
-        //Event Handlers
-        public event EventHandler<TennisEventArgs> designsDataFinishedDownloading_EventHandler;
-        public event EventHandler<TennisEventArgs> designCreationFailed_EventHandler;
-        public event EventHandler<TennisEventArgs> designLoadFinished_EventHandler;
-        /*========================*/
-
-        private static ParseDataAccess instance;
         private ParseDataAccess() { }
 
         public static ParseDataAccess Instance()
@@ -29,7 +25,7 @@ namespace Tennis.Parse.Controller
             return instance;
         }
 
-        public async void fetchAllDesignsMainInfo()
+        public async void requestDesignsList()
         {
             String jsonResponse = "[";
             var query = ParseObject.GetQuery("Designs");
@@ -40,7 +36,7 @@ namespace Tennis.Parse.Controller
                 {
                     IEnumerable<ParseObject> results = t.Result;
                     foreach (var obj in results){
-                        jsonResponse += "{\"id\":\"" + (string)obj.ObjectId + "\", \"name\":\"" + obj.Get<string>("name") + "\",\"updatedAt\":\"" + ((DateTime)obj.UpdatedAt).ToLocalTime().ToString() + "\",\"data\":null},";                        
+                        jsonResponse += "{\"ID\":\"" + (string)obj.ObjectId + "\", \"Name\":\"" + obj.Get<string>("name") + "\",\"UpdatedAt\":\"" + ((DateTime)obj.UpdatedAt).ToLocalTime().ToString() + "\"},";                        
                     }
                     jsonResponse += "]";
                  }
@@ -56,7 +52,6 @@ namespace Tennis.Parse.Controller
                         handler(this, args);
                     }
                 }
-
             });
             
         }
@@ -79,7 +74,7 @@ namespace Tennis.Parse.Controller
 
                     query.OrderByDescending("updatedAt").FirstAsync().ContinueWith(t2 => {
                         ParseObject result = t2.Result;
-                        this.fetchDesignDataForID((string)result.ObjectId, true);                               
+                        this.requestDesignDataForID((string)result.ObjectId, true);                               
                     });
                     
                 });
@@ -95,7 +90,7 @@ namespace Tennis.Parse.Controller
             }            
         }
 
-        public async void fetchDesignDataForID(String pID, bool pIsNew)
+        public async void requestDesignDataForID(String pID, bool pIsNew)
         {
             String responseJson = "";
             ParseQuery<ParseObject> query = ParseObject.GetQuery("Designs");
@@ -126,8 +121,11 @@ namespace Tennis.Parse.Controller
                     arcadeDate = "Sin Definir";
                 }
 
-                responseJson = "{\"id\":\"" + id + "\",\"name\":\"" + name + "\",\"updatedAt\":\"" + updatedAt + "\",\"data\":" + data + ",\"fireDuration\":"
-                    + fireDuration.ToString().Replace(',', '.') + ",\"fireDate\":\"" + fireDate + "\",\"arcadeDuration\":" + arcadeDuration.ToString().Replace(',', '.') + ",\"arcadeDate\":\"" + arcadeDate + "\"}";
+                responseJson = "{\"ID\":\"" + id + "\",\"Name\":\"" + name + "\",\"UpdatedAt\":\"" + 
+                    updatedAt + "\",\"DesignData\":" + data + ",\"FireModeDrawingDuration\":" + 
+                    fireDuration.ToString().Replace(',', '.') + ",\"FireModeBestDurationDate\":\"" + 
+                    fireDate + "\",\"ArcadeModeDrawingDuration\":" + arcadeDuration.ToString().Replace(',', '.') + 
+                    ",\"ArcadeModeBestDurationDate\":\"" + arcadeDate + "\"}";
             }) ;
 
             EventHandler<TennisEventArgs> handler = designLoadFinished_EventHandler;
@@ -142,7 +140,7 @@ namespace Tennis.Parse.Controller
         }
 
 
-        public async void saveDesign(String pDesignData, String pDesignId)
+        public async void updateDesignData(String pDesignData, String pDesignId)
         {
             ParseQuery<ParseObject> query = ParseObject.GetQuery("Designs");
             ParseObject design = await query.GetAsync(pDesignId);
@@ -158,5 +156,13 @@ namespace Tennis.Parse.Controller
             design[pMode + "Date"] = pDate;
             await design.SaveAsync();
         }
+
+        //Event Handlers
+        public event EventHandler<TennisEventArgs> designsDataFinishedDownloading_EventHandler;
+        public event EventHandler<TennisEventArgs> designCreationFailed_EventHandler;
+        public event EventHandler<TennisEventArgs> designLoadFinished_EventHandler;
+        /*========================*/
+
+        private static ParseDataAccess instance;
     }
 }

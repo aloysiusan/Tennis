@@ -4,7 +4,7 @@
         xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:Tennis.ApplicationGUI"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 		xmlns:Themes="clr-namespace:Xceed.Wpf.Toolkit.Themes;assembly=Xceed.Wpf.Toolkit" x:Name="mainWindow" mc:Ignorable="d" x:Class="Tennis.ApplicationGUI.MainWindow"
-		Title="Tennis Designer" Height="640" Width="944" MinWidth="660" MinHeight="550" Loaded="mainWindow_Loaded" MouseLeftButtonUp="Element_MouseLeftButtonUp">
+		Title="Tennis Designer" Height="640" Width="944" MinWidth="660" MinHeight="550" Loaded="onMainWindowLoad" MouseLeftButtonUp="onElementMouseLeftButtonUp">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -228,7 +228,7 @@
                 <ProgressBar x:Name="waitingProgress" Height="3" VerticalAlignment="Bottom" Foreground="#FF008AFF" BorderBrush="White" Background="White" Margin="0"/>
             </Border>
             <Label Content="Diseños" HorizontalAlignment="Left" Margin="4,5,0,0" VerticalAlignment="Top" FontSize="18.667" Foreground="#FF008AFF" Height="32" Width="78" Padding="5,3,5,5"/>
-            <Button x:Name="btnNewDesign" Content="+" HorizontalAlignment="Left" Margin="188,5,0,0" VerticalAlignment="Top" Width="32" FontSize="18.667" Background="{x:Null}" Foreground="#FF008AFF" BorderBrush="{x:Null}" Height="32" VerticalContentAlignment="Top" Style="{DynamicResource btnPlainStyle}" Click="btnNewDesign_Click" FontWeight="Bold" ToolTip="Nuevo Diseño" IsEnabled="False"/>
+            <Button x:Name="btnNewDesign" Content="+" HorizontalAlignment="Left" Margin="188,5,0,0" VerticalAlignment="Top" Width="32" FontSize="18.667" Background="{x:Null}" Foreground="#FF008AFF" BorderBrush="{x:Null}" Height="32" VerticalContentAlignment="Top" Style="{DynamicResource btnPlainStyle}" Click="onBtnNewDesignClick" FontWeight="Bold" ToolTip="Nuevo Diseño" IsEnabled="False"/>
         </Grid>
         <Grid Height="44" VerticalAlignment="Top" Background="White" Margin="221,0,0,0">
             <Border BorderBrush="#FF979797" BorderThickness="0,0,0,1" Height="44" VerticalAlignment="Top">
@@ -244,40 +244,40 @@
         <Grid x:Name="settingsView" Margin="0,44" HorizontalAlignment="Right" IsEnabled="False" Width="0">
             <Grid x:Name="lineSettingsGrid" Height="106" VerticalAlignment="Top" Margin="0,158,0,0">
                 <Label Content="Línea" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" Width="220"/>
-                <Slider x:Name="lineThicknessSld" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="lineThicknessSld_ValueChanged"/>
+                <Slider x:Name="lineThicknessSld" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="onlineThicknessSldValueChanged"/>
                 <Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
                 <Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="lineThicknessLbl" Content="1px" HorizontalAlignment="Left" Margin="183,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
-                <xctk:ColorPicker x:Name="lineColorPicker" Margin="54.773,49.96,81.227,33.96" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="lineColorPicker_SelectedColorChanged"/>
-                <CheckBox x:Name="chkDrawLines" Content="Dibujar Líneas" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="115,86,0,0" Foreground="#FF008AFF" Checked="chkDrawLines_Checked" Unchecked="chkDrawLines_Unchecked"/>
+                <xctk:ColorPicker x:Name="lineColorPicker" Margin="54.773,49.96,81.227,33.96" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="onLineColorPickerSelectedColorChanged"/>
+                <CheckBox x:Name="chkDrawLines" Content="Dibujar Líneas" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="115,86,0,0" Foreground="#FF008AFF" Checked="onChkDrawLinesIsChecked" Unchecked="onChkDrawLinesIsUnchecked"/>
             </Grid>
             <Grid x:Name="borderSettingsGrid" Height="79" VerticalAlignment="Top">
                 <Label Content="Contorno" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0"/>
-                <Slider x:Name="sldBorderThickness" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="sldBorderThickness_ValueChanged"/>
+                <Slider x:Name="sldBorderThickness" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="onSldBorderThicknessValueChanged"/>
                 <Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="lblBorderThickness" Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
                 <Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
-                <xctk:ColorPicker x:Name="borderColorPicker" Margin="54.773,49.96,81.227,6.96" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="borderColorPicker_SelectedColorChanged"/>
+                <xctk:ColorPicker x:Name="borderColorPicker" Margin="54.773,49.96,81.227,6.96" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="onBorderColorPickerSelectedColorChanged"/>
             </Grid>
             <Grid x:Name="baseLineSettingsGrid" Height="79" Margin="1,79,-1,0" VerticalAlignment="Top">
                 <Label Content="Suela" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" Width="220"/>
-                <Slider x:Name="sldBaseLineThickness" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="sldBaseLineThickness_ValueChanged"/>
+                <Slider x:Name="sldBaseLineThickness" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="onSldBaseLineThicknessValueChanged"/>
                 <Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="lblBaseLineThickness" Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
                 <Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,47.96,0,0" VerticalAlignment="Top"/>
-                <xctk:ColorPicker x:Name="baseLineColorPicker" Margin="54.773,49.96,81.227,6.96" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="baseLineColorPicker_SelectedColorChanged"/>
+                <xctk:ColorPicker x:Name="baseLineColorPicker" Margin="54.773,49.96,81.227,6.96" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="onBaseLineColorPickerSelectedColorChanged"/>
             </Grid>
             <Grid x:Name="shapesSettingsGrid" Height="166" Margin="0,265,0,0" VerticalAlignment="Top">
                 <Label Content="Elipse" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" Width="220" IsEnabled="False"/>
-                <Slider x:Name="sldEllipseThickness" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="sldEllipseThickness_ValueChanged"/>
+                <Slider x:Name="sldEllipseThickness" HorizontalAlignment="Left" Margin="54.773,25.96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127.197" Height="19" SmallChange="1" Minimum="1" ValueChanged="onSldEllipseThicknessValueChanged"/>
                 <Label Content="Grosor:" HorizontalAlignment="Left" Margin="1.44,20.96,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="lblEllipseThickness" Content="1px" HorizontalAlignment="Left" Margin="184.97,20,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
                 <Label Content="Color de borde:" HorizontalAlignment="Left" Margin="1,73,0,0" VerticalAlignment="Top"/>
                 <Label Content="Color de relleno:" HorizontalAlignment="Left" Margin="1,99,0,0" VerticalAlignment="Top"/>
-                <Ellipse x:Name="btnDrawCircle" HorizontalAlignment="Center" Height="32" Margin="94,129,94,0" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand" Fill="White" MouseLeftButtonUp="btnDrawShape_MouseLeftButtonUp"/>
-                <xctk:ColorPicker x:Name="shapeBorderColorPicker" Margin="104,75,32,69" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="shapeBorderColorPicker_SelectedColorChanged"/>
-                <xctk:ColorPicker x:Name="shapeFillColorPicker" Margin="104,101,32,43" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="shapeFillColorPicker_SelectedColorChanged"/>
-                <Slider x:Name="sldEllipseRadius" HorizontalAlignment="Left" Margin="55,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127" Height="19" SmallChange="1" Minimum="1" ValueChanged="sldEllipseRadius_ValueChanged"/>
+                <Ellipse x:Name="btnDrawCircle" HorizontalAlignment="Center" Height="32" Margin="94,129,94,0" Stroke="#FF008AFF" VerticalAlignment="Top" Width="32" Cursor="Hand" Fill="White" MouseLeftButtonUp="onBtnDrawEllipseMouseLeftButtonUp"/>
+                <xctk:ColorPicker x:Name="shapeBorderColorPicker" Margin="104,75,32,69" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="onShapeBorderColorPickerSelectedColorChanged"/>
+                <xctk:ColorPicker x:Name="shapeFillColorPicker" Margin="104,101,32,43" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="onShapeFillColorPickerSelectedColorChanged"/>
+                <Slider x:Name="sldEllipseRadius" HorizontalAlignment="Left" Margin="55,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="127" Height="19" SmallChange="1" Minimum="1" ValueChanged="onSldEllipseRadiusValueChanged"/>
                 <Label Content="Radio:" HorizontalAlignment="Left" Margin="1,45,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="lblEllipseRadius" Content="1px" HorizontalAlignment="Left" Margin="185,44,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
             </Grid>
@@ -285,25 +285,25 @@
             <Grid x:Name="fillSettingsGrid" Height="90" VerticalAlignment="Top" Margin="0,431,0,0">
                 <Label Content="Relleno" Margin="0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" Height="16" Padding="5,0" Width="220"/>
                 <Label Content="Color:" HorizontalAlignment="Left" Margin="1.44,17.96,0,0" VerticalAlignment="Top"/>
-                <xctk:ColorPicker x:Name="fillColorPicker" Margin="54.773,19.96,81.227,46.08" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="fillColorPicker_SelectedColorChanged"/>
-                <CheckBox x:Name="chkPaint" Content="Rellenar" HorizontalAlignment="Left" Margin="147.411,60.901,0,14" Foreground="#FF008AFF" Checked="chkPaint_Checked" Unchecked="chkPaint_Unchecked"/>
+                <xctk:ColorPicker x:Name="fillColorPicker" Margin="54.773,19.96,81.227,46.08" StandardColorsHeader="Colores Básicos" ShowAvailableColors="False" ShowRecentColors="False" Background="White" SelectedColorChanged="onFillColorPickerSelectedColorChanged"/>
+                <CheckBox x:Name="chkPaint" Content="Rellenar" HorizontalAlignment="Left" Margin="147.411,60.901,0,14" Foreground="#FF008AFF" Checked="onChkPaintIsChecked" Unchecked="onChkPaintIsUnchecked"/>
             </Grid>
         </Grid>
         <Border BorderBrush="#FF979797" BorderThickness="0,1,0,0" Height="44" VerticalAlignment="Bottom" Margin="220,0,1,0">
             <Grid>
-                <RadioButton x:Name="rdbDrawArcade" Content="Arcade" HorizontalAlignment="Left" Margin="128,15,0,0" VerticalAlignment="Top" Style="{DynamicResource radioButtonStyle}" Checked="rdbDrawArcade_Checked" Foreground="#FF595959" FontWeight="Bold"/>
-                <RadioButton x:Name="rdbDrawFire" Content="Fire" HorizontalAlignment="Left" Margin="65,15,0,0" VerticalAlignment="Top" IsChecked="True" Style="{DynamicResource radioButtonStyle}" Checked="rdbDrawFire_Checked" Foreground="#FF595959" FontWeight="Bold"/>
-                <Button x:Name="btnEditDesign" Content="Editar" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="75" Background="#FF008AFF" Foreground="White" BorderBrush="#FF008AFF" Style="{DynamicResource btnStyle}" IsEnabled="False" Click="btnEditDesign_Click"/>
-                <Button x:Name="btnSaveDesign" Content="Finalizar Edición" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" BorderBrush="#FF008AFF" Style="{DynamicResource btnStyle}" IsEnabled="False" Click="btnSaveDesign_Click" Visibility="Hidden"/>
-                <Button x:Name="btnCancelEdit" Content="Cancelar" HorizontalAlignment="Right" Margin="0,10,110,0" VerticalAlignment="Top" Width="75" Background="#FF008AFF" Foreground="White" BorderBrush="#FF008AFF" Style="{DynamicResource btnStyle}" IsEnabled="False" Click="btnCancelEdit_Click" Visibility="Hidden"/>
-                <Button x:Name="btnReports" Content="=" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="32" FontSize="18.667" Background="{x:Null}" Foreground="#FF008AFF" BorderBrush="{x:Null}" Height="32" VerticalContentAlignment="Top" Style="{DynamicResource btnPlainStyle}" FontWeight="Bold" ToolTip="Reportes de Duración" IsEnabled="False" Click="btnReports_Click"/>
+                <RadioButton x:Name="rdbDrawArcade" Content="Arcade" HorizontalAlignment="Left" Margin="128,15,0,0" VerticalAlignment="Top" Style="{DynamicResource radioButtonStyle}" Checked="onRdbDrawArcadeIsChecked" Foreground="#FF595959" FontWeight="Bold"/>
+                <RadioButton x:Name="rdbDrawFire" Content="Fire" HorizontalAlignment="Left" Margin="65,15,0,0" VerticalAlignment="Top" IsChecked="True" Style="{DynamicResource radioButtonStyle}" Checked="onRdbDrawFireIsChecked" Foreground="#FF595959" FontWeight="Bold"/>
+                <Button x:Name="btnEditDesign" Content="Editar" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="75" Background="#FF008AFF" Foreground="White" BorderBrush="#FF008AFF" Style="{DynamicResource btnStyle}" IsEnabled="False" Click="onBtnEditDesignClick"/>
+                <Button x:Name="btnSaveDesign" Content="Finalizar Edición" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Background="#FF008AFF" Foreground="White" BorderBrush="#FF008AFF" Style="{DynamicResource btnStyle}" IsEnabled="False" Click="onBtnSaveDesignClick" Visibility="Hidden"/>
+                <Button x:Name="btnCancelEdit" Content="Cancelar" HorizontalAlignment="Right" Margin="0,10,110,0" VerticalAlignment="Top" Width="75" Background="#FF008AFF" Foreground="White" BorderBrush="#FF008AFF" Style="{DynamicResource btnStyle}" IsEnabled="False" Click="onBtnCancelEditClick" Visibility="Hidden"/>
+                <Button x:Name="btnReports" Content="=" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="32" FontSize="18.667" Background="{x:Null}" Foreground="#FF008AFF" BorderBrush="{x:Null}" Height="32" VerticalContentAlignment="Top" Style="{DynamicResource btnPlainStyle}" FontWeight="Bold" ToolTip="Reportes de Duración" IsEnabled="False" Click="onBtnReportsClick"/>
             </Grid>
         </Border>
         <ed:Callout x:Name="insertNameMessageView" AnchorPoint="0.254,-0.425" CalloutStyle="Rectangle" Fill="White" FontSize="14.667" HorizontalAlignment="Left" Height="40" Margin="163,45,0,0" Stroke="#FF008AFF" VerticalAlignment="Top" Width="163" Visibility="Hidden">
             <ed:Callout.Effect>
                 <DropShadowEffect Direction="0" ShadowDepth="0" Opacity="0.545" BlurRadius="3"/>
             </ed:Callout.Effect>
-            <TextBox x:Name="txtNewName" HorizontalAlignment="Left" Height="40" TextWrapping="Wrap" VerticalAlignment="Top" Width="163" BorderBrush="{x:Null}" FontSize="13.333" Padding="4,-3,0,0" UseLayoutRounding="True" VerticalContentAlignment="Center" Foreground="#FF535353" Style="{DynamicResource txPlainStyle}" KeyDown="txtNewName_KeyDown"/>
+            <TextBox x:Name="txtNewName" HorizontalAlignment="Left" Height="40" TextWrapping="Wrap" VerticalAlignment="Top" Width="163" BorderBrush="{x:Null}" FontSize="13.333" Padding="4,-3,0,0" UseLayoutRounding="True" VerticalContentAlignment="Center" Foreground="#FF535353" Style="{DynamicResource txPlainStyle}" KeyDown="onTxtNewNameKeyDown"/>
         </ed:Callout>
         <ed:Callout x:Name="currentDesignReportsView" AnchorPoint="0.245,1.189" CalloutStyle="Rectangle" Fill="White" FontSize="14.667" HorizontalAlignment="Left" Height="121" Margin="188,0,0,50" Stroke="#FF008AFF" VerticalAlignment="Bottom" Width="237" Padding="0" Visibility="Hidden">
             <ed:Callout.Effect>

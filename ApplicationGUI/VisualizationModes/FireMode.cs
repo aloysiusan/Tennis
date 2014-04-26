@@ -17,59 +17,54 @@ using Tennis.TEventArgs;
 
 namespace Tennis.ApplicationGUI.VisualizationModes
 {
+    /// <summary>
+    /// Fire Visualization Mode: Draws designs in a faster way than Arcade Mode.
+    /// </summary>
     public class FireMode : VisualizationMode
     {
-        private TDesign currentDesign;
-        private Designer mainDesigner;
-        private Stopwatch Watcher;
-        private WriteableBitmap mainBitmap;
-        private static FireMode _currentInstance;
-
-        public event EventHandler<TennisEventArgs> finishDrawingDesign_EventHandler;
+        private FireMode(TDesign pDesign, Designer pDesigner)
+        {
+            _CurrentDesign = pDesign;
+            _MainDesigner = pDesigner;
+            _Watcher = new Stopwatch();
+        }
 
         public static FireMode createInstance(TDesign pDesign, Designer pDesigner)
         {
-            _currentInstance = new FireMode(pDesign, pDesigner);
-            return _currentInstance;
-        }
-
-        private FireMode(TDesign pDesign, Designer pDesigner)
-        {
-            currentDesign = pDesign;
-            mainDesigner = pDesigner;
-            Watcher = new Stopwatch();
+            CurrentInstance = new FireMode(pDesign, pDesigner);
+            return CurrentInstance;
         }
 
         public static FireMode Instance()
         {
-            return _currentInstance;
+            return CurrentInstance;
         }
 
         public override void initDrawing()
         {
-            Watcher.Start();
+            _Watcher.Start();
 
-            this.drawBorderLines(currentDesign.BorderLines);
-            this.drawBorderArcs(currentDesign.BorderArcs);
-            this.drawLine(currentDesign.BaseLine);
-            this.drawCustomLines(currentDesign.CustomLines);
-            this.drawCustomEllipses(currentDesign.CustomEllipses);
-            mainBitmap = BitmapConverter.CreateWriteableBitmapFromCanvas(mainDesigner.root);
+            this.drawBorderLines(_CurrentDesign.BorderLines);
+            this.drawBorderArcs(_CurrentDesign.BorderArcs);
+            this.drawLine(_CurrentDesign.BaseLine);
+            this.drawCustomLines(_CurrentDesign.CustomLines);
+            this.drawCustomEllipses(_CurrentDesign.CustomEllipses);
+            _MainBitmap = BitmapConverter.CreateWriteableBitmapFromCanvas(_MainDesigner.root);
 
-            foreach (TPoint fillPoint in currentDesign.FillIndicators)
+            foreach (TFillIndicator fillIndicator in _CurrentDesign.FillIndicators)
             {
-                this.paint(fillPoint);        
+                this.paint(fillIndicator);        
             }
 
-            Watcher.Stop();
+            _Watcher.Stop();
 
             EventHandler<TennisEventArgs> handler = finishDrawingDesign_EventHandler;
             if (handler != null)
             {
                 TennisEventArgs args = new TennisEventArgs();
-                args.DrawDuration = (float)Watcher.Elapsed.TotalMilliseconds;
+                args.DrawDuration = (float)_Watcher.Elapsed.TotalMilliseconds;
                 args.VisualizationMode = TennisEventArgs.Mode.FIRE;
-                args.DesignBitmap = mainBitmap;
+                args.DesignBitmap = _MainBitmap;
                 handler(this, args);
             }
 
@@ -80,21 +75,20 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             {
                 drawLine(tline);
             }
-            Console.WriteLine("border lines painted");
         }
 
         private void drawLine(TLine pLine)
         {
             LineGeometry line = new LineGeometry();
-            line.StartPoint = new Point(pLine.startPoint.XPosition + TLine.POSITION_OFFSET, pLine.startPoint.YPosition + TLine.POSITION_OFFSET);
-            line.EndPoint = new Point(pLine.endPoint.XPosition + TLine.POSITION_OFFSET, pLine.endPoint.YPosition + TLine.POSITION_OFFSET);
+            line.StartPoint = new Point(pLine.StartPoint.XPosition + TLine.POSITION_OFFSET, pLine.StartPoint.YPosition + TLine.POSITION_OFFSET);
+            line.EndPoint = new Point(pLine.EndPoint.XPosition + TLine.POSITION_OFFSET, pLine.EndPoint.YPosition + TLine.POSITION_OFFSET);
 
             Path path = new Path();
-            path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.color)); ;
-            path.StrokeThickness = pLine.thickness;
+            path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.Color)); ;
+            path.StrokeThickness = pLine.Thickness;
 
             path.Data = line;
-            mainDesigner.AddShape(path);
+            _MainDesigner.AddShape(path);
         }
 
         private void drawBorderArcs(TArc[] pArcs)
@@ -103,17 +97,16 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             {
                 PathGeometry pathGeometry = new PathGeometry();
                 PathFigure figure = new PathFigure();
-                figure.StartPoint = new Point(arc.startPoint.XPosition + TArc.POSITION_OFFSET, arc.startPoint.YPosition + TArc.POSITION_OFFSET);
-                SweepDirection direction = !(arc.inverted) ? SweepDirection.Clockwise : SweepDirection.Counterclockwise;
-                figure.Segments.Add(new ArcSegment(new Point(arc.endPoint.XPosition + TArc.POSITION_OFFSET, arc.endPoint.YPosition + TArc.POSITION_OFFSET), new Size(100, 100), 0, false, direction, true));
+                figure.StartPoint = new Point(arc._StartPoint.XPosition + TArc.POSITION_OFFSET, arc._StartPoint.YPosition + TArc.POSITION_OFFSET);
+                SweepDirection direction = !(arc._Inverted) ? SweepDirection.Clockwise : SweepDirection.Counterclockwise;
+                figure.Segments.Add(new ArcSegment(new Point(arc._EndPoint.XPosition + TArc.POSITION_OFFSET, arc._EndPoint.YPosition + TArc.POSITION_OFFSET), new Size(100, 100), 0, false, direction, true));
                 pathGeometry.Figures.Add(figure);
                 Path path = new Path();
                 path.Data = pathGeometry;
-                path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc.color));
-                path.StrokeThickness = arc.thickness;
-                mainDesigner.AddShape(path);
+                path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc._Color));
+                path.StrokeThickness = arc._Thickness;
+                _MainDesigner.AddShape(path);
             }
-            Console.WriteLine("border arcs painted");
         }
 
         private void drawCustomLines(List<TLine> pLines)
@@ -122,22 +115,20 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             {
                 drawLine(line);
             }
-
-            Console.WriteLine("custom lines painted");
         }
 
         private void drawEllipse(TEllipse pEllipse)
         {
-            EllipseGeometry newEllipse = new EllipseGeometry(new Point(pEllipse.radiusPoint.XPosition, pEllipse.radiusPoint.YPosition), pEllipse.radius - pEllipse.thickness*0.6, pEllipse.radius - pEllipse.thickness*0.6);
+            EllipseGeometry newEllipse = new EllipseGeometry(new Point(pEllipse.RadiusPoint.XPosition, pEllipse.RadiusPoint.YPosition), pEllipse.Radius - pEllipse.Thickness*0.6, pEllipse.Radius - pEllipse.Thickness*0.6);
             Path path = new Path();
 
-            path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
-            path.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.fillColor));
-            path.StrokeThickness = pEllipse.thickness;
+            path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.BorderColor));
+            path.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.FillColor));
+            path.StrokeThickness = pEllipse.Thickness;
 
             path.Data = newEllipse;
 
-            mainDesigner.AddShape(path);            
+            _MainDesigner.AddShape(path);            
         }
 
         private void drawCustomEllipses(List<TEllipse> pEllipses)
@@ -148,24 +139,24 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             }
         }
 
-        private void paint(TPoint fillPoint)
+        private void paint(TFillIndicator pFillIndicator)
         {
-            fillPoint.adjustPosition(mainDesigner.ActualWidth, mainDesigner.ActualHeight); // 4 Tiempos
+            pFillIndicator.adjustPosition(_MainDesigner.ActualWidth, _MainDesigner.ActualHeight); // 4 Tiempos
 
-            Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); // 7 Tiempos
-            Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor); // 4 Tiempos
-            Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor); // 4 Tiempos
+            Point pt = new Point(pFillIndicator.XPosition * BitmapConverter.SCALE, pFillIndicator.YPosition * BitmapConverter.SCALE); // 7 Tiempos
+            Color newColor = (Color)ColorConverter.ConvertFromString(pFillIndicator.NewFillColor); // 4 Tiempos
+            Color oldColor = (Color)ColorConverter.ConvertFromString(pFillIndicator.OldFillColor); // 4 Tiempos
 
             Stack<Point> StackPoint = new Stack<Point>(); // 3 Tiempos
             StackPoint.Push(pt); // 3 Tiempos
             while (StackPoint.Count != 0) // N
             {
                 pt = StackPoint.Pop(); // 3 Tiempos
-                Color CurrentColor = GetPixelColor((int)pt.X, (int)pt.Y); //5 tiempos
-                if (ColorMatch(CurrentColor, oldColor)) // 5 Tiempos
+                Color CurrentColor = getPixelColor((int)pt.X, (int)pt.Y); //5 tiempos
+                if (isColorMatch(CurrentColor, oldColor)) // 5 Tiempos
                 {
                     Random rnd = new Random(); // 3 Tiempos
-                    SetPixelColor((int)pt.X, (int)pt.Y, newColor); // 4 Tiempos
+                    setPixelColor((int)pt.X, (int)pt.Y, newColor); // 4 Tiempos
                     for (int i = 0; i < 8; i++) // 1 + 8*3 Tiempos
                     {
                         StackPoint.Push(new Point(pt.X + rnd.Next(3) - 1, pt.Y + rnd.Next(3) - 1)); // 16 Tiempos
@@ -185,24 +176,32 @@ namespace Tennis.ApplicationGUI.VisualizationModes
          * Duracion: O(n)
          */
 
-        private bool ColorMatch(Color a, Color b)
+        private bool isColorMatch(Color pColorA, Color pColorB)
         {
             int diff = 10;
-            return (a.A - diff < b.A && a.A + diff > b.A && a.R - diff < b.R && a.R + diff > b.R &&
-                        a.G - diff < b.G && a.G + diff > b.G && a.B - diff < b.B && a.B + diff > b.B);
+            return (pColorA.A - diff < pColorB.A && pColorA.A + diff > pColorB.A && pColorA.R - diff < pColorB.R && pColorA.R + diff > pColorB.R &&
+                        pColorA.G - diff < pColorB.G && pColorA.G + diff > pColorB.G && pColorA.B - diff < pColorB.B && pColorA.B + diff > pColorB.B);
         }
 
-        private Color GetPixelColor(int x, int y)
+        private Color getPixelColor(int pX, int pY)
         {            
             var pixels = new byte[4];
-            mainBitmap.CopyPixels(new Int32Rect(x,y,1,1), pixels, 4, 0);
+            _MainBitmap.CopyPixels(new Int32Rect(pX,pY,1,1), pixels, 4, 0);
             return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
         }
 
-        private void SetPixelColor(int x, int y, Color newColor)
+        private void setPixelColor(int pX, int pY, Color pNewColor)
         {                                                           
-            var pixels = new byte[] { newColor.B, newColor.G, newColor.R, newColor.A }; // Blue Green Red Alpha
-            mainBitmap.WritePixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0); 
+            var pixels = new byte[] { pNewColor.B, pNewColor.G, pNewColor.R, pNewColor.A }; // Blue Green Red Alpha
+            _MainBitmap.WritePixels(new Int32Rect(pX, pY, 1, 1), pixels, 4, 0); 
         }
+
+        private TDesign _CurrentDesign;
+        private Designer _MainDesigner;
+        private Stopwatch _Watcher;
+        private WriteableBitmap _MainBitmap;
+        private static FireMode CurrentInstance;
+
+        public event EventHandler<TennisEventArgs> finishDrawingDesign_EventHandler;
     }
 }

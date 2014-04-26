@@ -16,15 +16,17 @@ using Tennis.TEventArgs;
 
 namespace Tennis.ApplicationGUI.VisualizationModes
 {
+    /// <summary>
+    /// Arcade Visualization Mode: Draws designs in a slower way than Fire Mode.
+    /// </summary>
     class ArcadeMode : VisualizationMode
     {
-        private TDesign _CurrentDesign;
-        private Designer _MainDesigner;
-        private WriteableBitmap _MainBitmap;
-        private static ArcadeMode CurrentInstance;
-        private Stopwatch _Watcher;
-
-        public event EventHandler<TennisEventArgs> finishDrawingDesign_EventHandler;
+        private ArcadeMode(TDesign pDesign, Designer pDesigner)
+        {
+            _CurrentDesign = pDesign;
+            _MainDesigner = pDesigner;
+            _Watcher = new Stopwatch();
+        }
 
         public static ArcadeMode createNewInstance(TDesign pDesign, Designer pDesigner)
         {
@@ -35,13 +37,6 @@ namespace Tennis.ApplicationGUI.VisualizationModes
         public static ArcadeMode getInstance()
         {
             return CurrentInstance;
-        }
-
-        private ArcadeMode(TDesign pDesign, Designer pDesigner)
-        {
-            _CurrentDesign = pDesign;
-            _MainDesigner = pDesigner;
-            _Watcher = new Stopwatch();
         }
 
         public override void initDrawing()
@@ -55,9 +50,9 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             this.drawCustomEllipses(_CurrentDesign.CustomEllipses);
             _MainBitmap = BitmapConverter.CreateWriteableBitmapFromCanvas(_MainDesigner.root);
 
-            foreach (TPoint fillPoint in _CurrentDesign.FillIndicators)
+            foreach (TFillIndicator fillIndicator in _CurrentDesign.FillIndicators)
             {
-                this.fillArea(fillPoint);
+                this.fillArea(fillIndicator);
             }
 
             _Watcher.Stop();
@@ -85,12 +80,12 @@ namespace Tennis.ApplicationGUI.VisualizationModes
         private void drawLine(TLine pLine)
         {
             Line line = new Line();
-            line.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.color));
-            line.X1 = pLine.startPoint.XPosition + TLine.POSITION_OFFSET;
-            line.X2 = pLine.endPoint.XPosition + TLine.POSITION_OFFSET;
-            line.Y1 = pLine.startPoint.YPosition + TLine.POSITION_OFFSET;
-            line.Y2 = pLine.endPoint.YPosition + TLine.POSITION_OFFSET;
-            line.StrokeThickness = pLine.thickness;
+            line.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.Color));
+            line.X1 = pLine.StartPoint.XPosition + TLine.POSITION_OFFSET;
+            line.X2 = pLine.EndPoint.XPosition + TLine.POSITION_OFFSET;
+            line.Y1 = pLine.StartPoint.YPosition + TLine.POSITION_OFFSET;
+            line.Y2 = pLine.EndPoint.YPosition + TLine.POSITION_OFFSET;
+            line.StrokeThickness = pLine.Thickness;
 
             _MainDesigner.AddShape(line);
         }
@@ -101,14 +96,14 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             {
                 PathGeometry pathGeometry = new PathGeometry();
                 PathFigure figure = new PathFigure();
-                figure.StartPoint = new Point(arc.startPoint.XPosition + TArc.POSITION_OFFSET, arc.startPoint.YPosition + TArc.POSITION_OFFSET);
-                SweepDirection direction = !(arc.inverted) ? SweepDirection.Clockwise : SweepDirection.Counterclockwise;
-                figure.Segments.Add(new ArcSegment(new Point(arc.endPoint.XPosition + TArc.POSITION_OFFSET, arc.endPoint.YPosition + TArc.POSITION_OFFSET), new Size(100, 100), 0, false, direction, true));
+                figure.StartPoint = new Point(arc._StartPoint.XPosition + TArc.POSITION_OFFSET, arc._StartPoint.YPosition + TArc.POSITION_OFFSET);
+                SweepDirection direction = !(arc._Inverted) ? SweepDirection.Clockwise : SweepDirection.Counterclockwise;
+                figure.Segments.Add(new ArcSegment(new Point(arc._EndPoint.XPosition + TArc.POSITION_OFFSET, arc._EndPoint.YPosition + TArc.POSITION_OFFSET), new Size(100, 100), 0, false, direction, true));
                 pathGeometry.Figures.Add(figure);
                 Path path = new Path();
                 path.Data = pathGeometry;
-                path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc.color));
-                path.StrokeThickness = arc.thickness;
+                path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc._Color));
+                path.StrokeThickness = arc._Thickness;
                 _MainDesigner.AddShape(path);
             }
         }
@@ -124,13 +119,13 @@ namespace Tennis.ApplicationGUI.VisualizationModes
         private void drawEllipse(TEllipse pEllipse)
         {
             Ellipse newEllipse = new Ellipse();
-            newEllipse.Height = pEllipse.radius*2;
-            newEllipse.Width = pEllipse.radius*2;
-            newEllipse.StrokeThickness = pEllipse.thickness;
-            newEllipse.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.fillColor));
-            newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
-            Canvas.SetLeft(newEllipse, pEllipse.radiusPoint.XPosition - pEllipse.radius);
-            Canvas.SetTop(newEllipse, pEllipse.radiusPoint.YPosition - pEllipse.radius);
+            newEllipse.Height = pEllipse.Radius*2;
+            newEllipse.Width = pEllipse.Radius*2;
+            newEllipse.StrokeThickness = pEllipse.Thickness;
+            newEllipse.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.FillColor));
+            newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.BorderColor));
+            Canvas.SetLeft(newEllipse, pEllipse.RadiusPoint.XPosition - pEllipse.Radius);
+            Canvas.SetTop(newEllipse, pEllipse.RadiusPoint.YPosition - pEllipse.Radius);
             _MainDesigner.AddShape(newEllipse);
         }
 
@@ -143,13 +138,13 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             }
         }
 
-        private void fillArea(TPoint fillPoint)
+        private void fillArea(TFillIndicator pFillIndicator)
         {
-            fillPoint.adjustPosition(_MainDesigner.ActualWidth, _MainDesigner.ActualHeight); //4 Tiempos
+            pFillIndicator.adjustPosition(_MainDesigner.ActualWidth, _MainDesigner.ActualHeight); //4 Tiempos
 
-            Point pt = new Point(fillPoint.XPosition * BitmapConverter.SCALE, fillPoint.YPosition * BitmapConverter.SCALE); // 7 Tiempos
-            Color newColor = (Color)ColorConverter.ConvertFromString(fillPoint.fillColor); // 4 Tiempos
-            Color oldColor = (Color)ColorConverter.ConvertFromString(fillPoint.oldColor); // 4 Tiempos
+            Point pt = new Point(pFillIndicator.XPosition * BitmapConverter.SCALE, pFillIndicator.YPosition * BitmapConverter.SCALE); // 7 Tiempos
+            Color newColor = (Color)ColorConverter.ConvertFromString(pFillIndicator.NewFillColor); // 4 Tiempos
+            Color oldColor = (Color)ColorConverter.ConvertFromString(pFillIndicator.OldFillColor); // 4 Tiempos
 
             Stack<Point> StackPoint = new Stack<Point>(); // 3 Tiempos
             StackPoint.Push(pt); // 3 Tiempos
@@ -179,24 +174,32 @@ namespace Tennis.ApplicationGUI.VisualizationModes
          * Duracion: O(n)
          */
 
-        private bool isColorMatch(Color a, Color b)
+        private bool isColorMatch(Color pColorA, Color pColorB)
         {
             int diff = 10;
-            return (a.A - diff < b.A && a.A + diff > b.A && a.R - diff < b.R && a.R + diff > b.R &&
-                        a.G - diff < b.G && a.G + diff > b.G && a.B - diff < b.B && a.B + diff > b.B);
+            return (pColorA.A - diff < pColorB.A && pColorA.A + diff > pColorB.A && pColorA.R - diff < pColorB.R && pColorA.R + diff > pColorB.R &&
+                        pColorA.G - diff < pColorB.G && pColorA.G + diff > pColorB.G && pColorA.B - diff < pColorB.B && pColorA.B + diff > pColorB.B);
         }
 
-        private Color getPixelColor(int x, int y)
+        private Color getPixelColor(int pX, int pY)
         {
             var pixels = new byte[4];
-            _MainBitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
+            _MainBitmap.CopyPixels(new Int32Rect(pX, pY, 1, 1), pixels, 4, 0);
             return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
         }
 
-        private void setPixelColor(int x, int y, Color newColor)
+        private void setPixelColor(int pX, int pY, Color pNewColor)
         {
-            var pixels = new byte[] { newColor.B, newColor.G, newColor.R, newColor.A }; // Blue Green Red Alpha
-            _MainBitmap.WritePixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
+            var pixels = new byte[] { pNewColor.B, pNewColor.G, pNewColor.R, pNewColor.A }; // Blue Green Red Alpha
+            _MainBitmap.WritePixels(new Int32Rect(pX, pY, 1, 1), pixels, 4, 0);
         }
+
+        private TDesign _CurrentDesign;
+        private Designer _MainDesigner;
+        private WriteableBitmap _MainBitmap;
+        private static ArcadeMode CurrentInstance;
+        private Stopwatch _Watcher;
+
+        public event EventHandler<TennisEventArgs> finishDrawingDesign_EventHandler;
     }
 }

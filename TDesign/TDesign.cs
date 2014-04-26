@@ -7,40 +7,35 @@ using Tennis.Shapes;
 
 namespace Tennis.Design
 {
-    /* Porcentaje de localización inicial X de los puntos en el Canvas:
-     * A = 10%
-     * B = 40%
-     * C = 60%
-     * D = 90%
-     * E = 10%
-     */
-
-    /* Porcentaje de localización inicial Y de los puntos en el Canvas:
-    * A = 20%
-    * B = 10%
-    * C = 50%
-    * D = 90%
-    * E = 90%
-    */
+    /// <summary>
+    /// Logical shoe design.
+    /// </summary>
 
     public class TDesign
     {
-        private TPoint _PointA;
-        private TPoint _PointB;
-        private TPoint _PointC;
-        private TPoint _PointD;
-        private TPoint _PointE;
+        public TDesign(double pContainerWidth, double pContainerHeight)
+        {
+            _PointA = new TPoint('a', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointA_XPosition, TPoint.DefaultPosition.DefaultPointA_YPosition);
+            _PointB = new TPoint('b', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointB_XPosition, TPoint.DefaultPosition.DefaultPointB_YPosition);
+            _PointC = new TPoint('c', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointC_XPosition, TPoint.DefaultPosition.DefaultPointC_YPosition);
+            _PointD = new TPoint('d', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointD_XPosition, TPoint.DefaultPosition.DefaultPointD_YPosition);
+            _PointE = new TPoint('e', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointE_XPosition, TPoint.DefaultPosition.DefaultPointE_YPosition);
 
-        private TLine[] _BorderLines;
-        private List<TLine> _CustomLines;
+            _BorderLines = new TLine[2];
+            _BorderArcs = new TArc[2];
+            _CustomLines = new List<TLine>();
+            _CustomEllipses = new List<TEllipse>();
+            _FillIndicators = new List<TFillIndicator>();
 
-        private TLine _BaseLine;
-        private TArc[] _BorderArcs;
+            _BorderLines[0] = new TLine(_PointB, _PointC);
+            _BorderLines[1] = new TLine(_PointC, _PointD);
 
-        private List<TEllipse> _CustomEllipses;
+            _BorderArcs[0] = new TArc(_PointE, _PointA, false);
+            _BorderArcs[1] = new TArc(_PointA, _PointB, true);
 
-        private List<TPoint> _FillIndicators;
-
+            _BaseLine = new TLine(_PointE, _PointD);
+        }
+        
         public TPoint PointA
         {
             get { return _PointA; }
@@ -91,7 +86,7 @@ namespace Tennis.Design
 
         public TArc[] BorderArcs
         {
-            get {return _BorderArcs;}
+            get { return _BorderArcs; }
             set { _BorderArcs = value; }
         }
 
@@ -101,35 +96,15 @@ namespace Tennis.Design
             set { _CustomEllipses = value; }
         }
 
-        public List<TPoint> FillIndicators
+        public List<TFillIndicator> FillIndicators
         {
             get { return _FillIndicators; }
             set { _FillIndicators = value; }
         }
 
-        public TDesign( double pContainerWidth, double pContainerHeight)
-        {
-            _PointA = new TPoint('a', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointA_XPosition, TPoint.DefaultPosition.DefaultPointA_YPosition);
-            _PointB = new TPoint('b', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointB_XPosition, TPoint.DefaultPosition.DefaultPointB_YPosition);
-            _PointC = new TPoint('c', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointC_XPosition, TPoint.DefaultPosition.DefaultPointC_YPosition);
-            _PointD = new TPoint('d', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointD_XPosition, TPoint.DefaultPosition.DefaultPointD_YPosition);
-            _PointE = new TPoint('e', pContainerWidth, pContainerHeight, TPoint.DefaultPosition.DefaultPointE_XPosition, TPoint.DefaultPosition.DefaultPointE_YPosition);
-
-            _BorderLines = new TLine[2];
-            _BorderArcs = new  TArc[2];
-            _CustomLines = new List<TLine>();
-            _CustomEllipses = new List<TEllipse>();
-            _FillIndicators = new List<TPoint>();
-
-            _BorderLines[0] = new TLine(_PointB, _PointC);
-            _BorderLines[1] = new TLine(_PointC, _PointD);
-            
-            _BorderArcs[0] = new TArc(_PointE, _PointA, false);
-            _BorderArcs[1] = new TArc(_PointA, _PointB, true);
-
-            _BaseLine = new TLine(_PointE, _PointD);
-        }
-
+        /// <summary>
+        /// Gets the Point with specified id.
+        /// </summary>
         public TPoint getPointWithID(char pID)
         {
             switch (pID)
@@ -149,33 +124,48 @@ namespace Tennis.Design
             }
         }
 
+        /// <summary>
+        /// Sets shoe border thickness.
+        /// </summary>
         public void setBorderThickness(int pValue)
         {
-            _BorderLines[0].thickness = pValue;
-            _BorderLines[1].thickness = pValue;
-            _BorderArcs[0].thickness = pValue;
-            _BorderArcs[1].thickness = pValue;
+            _BorderLines[0].Thickness = pValue;
+            _BorderLines[1].Thickness = pValue;
+            _BorderArcs[0].Thickness = pValue;
+            _BorderArcs[1].Thickness = pValue;
         }
 
+        /// <summary>
+        /// Sets shoe border color.
+        /// </summary>
         public void setBorderColor(String pColorValue)
         {
-            _BorderLines[0].color = pColorValue;
-            _BorderLines[1].color = pColorValue;
-            _BorderArcs[0].color = pColorValue;
-            _BorderArcs[1].color = pColorValue;
+            _BorderLines[0].Color = pColorValue;
+            _BorderLines[1].Color = pColorValue;
+            _BorderArcs[0].Color = pColorValue;
+            _BorderArcs[1].Color = pColorValue;
         }
 
+        /// <summary>
+        /// Sets shoe sole thickness.
+        /// </summary>
         public void setBaseLineThickness(int pValue)
         {
-            _BaseLine.thickness = pValue;
+            _BaseLine.Thickness = pValue;
         }
 
+        /// <summary>
+        /// Sets shoe sole color.
+        /// </summary>
         public void setBaseLineColor(String pColorValue)
         {
-            _BaseLine.color = pColorValue;
+            _BaseLine.Color = pColorValue;
         }
 
-        public void adjustPoints(double pRelativeWidth, double pRelativeHeight)
+        /// <summary>
+        /// Adjust points position relative to the container size.
+        /// </summary>
+        public void adjustPointsForRelativePosition(double pRelativeWidth, double pRelativeHeight)
         {
             _PointA.adjustPosition(pRelativeWidth, pRelativeHeight);
             _PointB.adjustPosition(pRelativeWidth, pRelativeHeight);
@@ -183,20 +173,23 @@ namespace Tennis.Design
             _PointD.adjustPosition(pRelativeWidth, pRelativeHeight);
             _PointE.adjustPosition(pRelativeWidth, pRelativeHeight);
 
-            _BorderLines[0].startPoint = _PointB;
-            _BorderLines[0].endPoint = _PointC;
-            _BorderLines[1].startPoint = _PointC;
-            _BorderLines[1].endPoint = _PointD;
+            _BorderLines[0].StartPoint = _PointB;
+            _BorderLines[0].EndPoint = _PointC;
+            _BorderLines[1].StartPoint = _PointC;
+            _BorderLines[1].EndPoint = _PointD;
 
-            _BorderArcs[0].startPoint = _PointE;
-            _BorderArcs[0].endPoint = _PointA;
-            _BorderArcs[1].startPoint = _PointA;
-            _BorderArcs[1].endPoint = _PointB;
+            _BorderArcs[0].StartPoint = _PointE;
+            _BorderArcs[0].EndPoint = _PointA;
+            _BorderArcs[1].StartPoint = _PointA;
+            _BorderArcs[1].EndPoint = _PointB;
 
-            _BaseLine.startPoint = _PointE;
-            _BaseLine.endPoint = _PointD;
+            _BaseLine.StartPoint = _PointE;
+            _BaseLine.EndPoint = _PointD;
         }
 
+        /// <summary>
+        /// Creates an identical clone of this instance.
+        /// </summary>
         public TDesign Clone()
         {
             TDesign thisClone = new TDesign(0, 0);
@@ -215,19 +208,36 @@ namespace Tennis.Design
             thisClone._BaseLine = this._BaseLine.Clone(thisClone._PointE, thisClone._PointD);
             
             foreach(TLine line in this._CustomLines){
-                thisClone._CustomLines.Add(line.Clone(line.startPoint.Clone(),line.endPoint.Clone()));
+                thisClone._CustomLines.Add(line.Clone(line.StartPoint.Clone(),line.EndPoint.Clone()));
             }      
      
             foreach(TEllipse ellipse in this._CustomEllipses){
-                thisClone._CustomEllipses.Add(ellipse.Clone(ellipse.radiusPoint));
+                thisClone._CustomEllipses.Add(ellipse.Clone(ellipse.RadiusPoint));
             }
 
-            foreach (TPoint fillPoint in this._FillIndicators)
+            foreach (TFillIndicator fillIndicator in this._FillIndicators)
             {
-                thisClone._FillIndicators.Add(fillPoint.Clone());
+                thisClone._FillIndicators.Add(fillIndicator.Clone());
             }
 
             return thisClone;
         }
+
+        private TPoint _PointA;
+        private TPoint _PointB;
+        private TPoint _PointC;
+        private TPoint _PointD;
+        private TPoint _PointE;
+
+        private TLine[] _BorderLines;
+        private List<TLine> _CustomLines;
+
+        private TLine _BaseLine;
+        private TArc[] _BorderArcs;
+
+        private List<TEllipse> _CustomEllipses;
+
+        private List<TFillIndicator> _FillIndicators;
+
     }
 }

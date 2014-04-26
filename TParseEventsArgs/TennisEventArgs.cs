@@ -13,17 +13,6 @@ namespace Tennis.TEventArgs
             FIRE, ARCADE
         }
 
-        private String _ParseJSONData;
-        private bool _FinishedSuccessfully;
-        private bool _isNewDesign;
-        private String _selectedDesignID;
-        private object _ParseObjectData;
-        private object[] _DesignData;
-        private List<object> _DesignsList;
-        private float _DrawDuration;
-        private Mode _VisualizationMode;
-        private WriteableBitmap _DesignBitmap;
-
         public String ParseJSONData
         {
             get { return _ParseJSONData; }
@@ -83,5 +72,16 @@ namespace Tennis.TEventArgs
             get { return _VisualizationMode; }
             set { _VisualizationMode = value; }
         }
+
+        private String _ParseJSONData;
+        private bool _FinishedSuccessfully;
+        private bool _isNewDesign;
+        private String _selectedDesignID;
+        private object _ParseObjectData;
+        private object[] _DesignData;
+        private List<object> _DesignsList;
+        private float _DrawDuration;
+        private Mode _VisualizationMode;
+        private WriteableBitmap _DesignBitmap;
     }
 }

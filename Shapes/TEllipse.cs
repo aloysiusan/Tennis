@@ -6,27 +6,63 @@ using System.Threading.Tasks;
 
 namespace Tennis.Shapes
 {
+    /// <summary>
+    /// Logial Ellipse shape for design.
+    /// </summary>
     public class TEllipse
     {
-        public TPoint radiusPoint;
-        public int thickness = 1;
-        public String fillColor = "#000000";
-        public String borderColor = "#000000";
-        public int radius = 1;
-
         public TEllipse(TPoint pRadiusPoint)
         {
-            radiusPoint = pRadiusPoint;
+            _RadiusPoint = pRadiusPoint;
         }
 
+        public TPoint RadiusPoint
+        {
+            get { return _RadiusPoint; }
+            set { _RadiusPoint = value; }
+        }
+
+        public int Thickness
+        {
+            get { return _Thickness; }
+            set { _Thickness = value; }
+        }
+
+        public String BorderColor
+        {
+            get { return _BorderColor; }
+            set { _BorderColor = value; }
+        }
+
+        public String FillColor
+        {
+            get { return _FillColor; }
+            set { _FillColor = value; }
+        }
+
+        public int Radius
+        {
+            get { return _Radius; }
+            set { _Radius = value; }
+        }
+
+        /// <summary>
+        /// Creates an identical clone of this instance.
+        /// </summary>
         public TEllipse Clone(TPoint pRadiusPoint)
         {
             TEllipse thisClone = new TEllipse(pRadiusPoint);
-            thisClone.thickness = this.thickness;
-            thisClone.fillColor = this.fillColor;
-            thisClone.borderColor = this.borderColor;
-            thisClone.radius = this.radius;
+            thisClone._Thickness = this._Thickness;
+            thisClone._FillColor = this._FillColor;
+            thisClone._BorderColor = this._BorderColor;
+            thisClone._Radius = this._Radius;
             return thisClone;
         }
+
+        private TPoint _RadiusPoint;
+        private int _Thickness = 1;
+        private String _FillColor = "#000000";
+        private String _BorderColor = "#000000";
+        private int _Radius = 1;
     }
 }

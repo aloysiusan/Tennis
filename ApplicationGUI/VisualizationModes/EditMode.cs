@@ -73,7 +73,7 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             this.drawPoint(currentDesign.getPointWithID('d'));
             this.drawPoint(currentDesign.getPointWithID('e'));
 
-            this.drawFillPoints(currentDesign.FillIndicators);
+            this.drawFillIndicators(currentDesign.FillIndicators);
 
         }
 
@@ -83,8 +83,8 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             guiPoint.Uid = pPoint.getID().ToString();
             guiPoint.Height = TPoint.RADIUS;
             guiPoint.Width = TPoint.RADIUS;
-            guiPoint.Fill = (pPoint.getID() == 'f') ? (SolidColorBrush)(new BrushConverter().ConvertFrom(pPoint.fillColor)) : (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.DEFAULT_COLOR));
-            guiPoint.Stroke = (pPoint.getID() == 'f') ? (SolidColorBrush)(new BrushConverter().ConvertFrom(pPoint.fillColor)) : (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.DEFAULT_COLOR));
+            guiPoint.Fill =  (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.DEFAULT_COLOR));
+            guiPoint.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(TPoint.DEFAULT_COLOR));
             guiPoint.StrokeThickness = 1;
             guiPoint.Cursor = Cursors.Hand;
 
@@ -94,6 +94,21 @@ namespace Tennis.ApplicationGUI.VisualizationModes
 
             Canvas.SetLeft(guiPoint, pPoint.XPosition);
             Canvas.SetTop(guiPoint, pPoint.YPosition);
+            mainDesigner.AddShape(guiPoint);
+        }
+
+        private void drawFillIndicator(TFillIndicator pIndicator)
+        {
+            Ellipse guiPoint = new Ellipse();
+            guiPoint.Uid = pIndicator.getID().ToString();
+            guiPoint.Height = TPoint.RADIUS;
+            guiPoint.Width = TPoint.RADIUS;
+            guiPoint.Fill =  (SolidColorBrush)(new BrushConverter().ConvertFrom(pIndicator.NewFillColor));
+            guiPoint.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pIndicator.NewFillColor));
+            guiPoint.StrokeThickness = 1;
+
+            Canvas.SetLeft(guiPoint, pIndicator.XPosition);
+            Canvas.SetTop(guiPoint, pIndicator.YPosition);
             mainDesigner.AddShape(guiPoint);
         }
 
@@ -108,12 +123,12 @@ namespace Tennis.ApplicationGUI.VisualizationModes
         private void drawLine(TLine pLine)
         {
             Line line = new Line();
-            line.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.color));
-            line.X1 = pLine.startPoint.XPosition + TLine.POSITION_OFFSET;
-            line.X2 = pLine.endPoint.XPosition + TLine.POSITION_OFFSET;
-            line.Y1 = pLine.startPoint.YPosition + TLine.POSITION_OFFSET;
-            line.Y2 = pLine.endPoint.YPosition + TLine.POSITION_OFFSET;
-            line.StrokeThickness = pLine.thickness;
+            line.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pLine.Color));
+            line.X1 = pLine.StartPoint.XPosition + TLine.POSITION_OFFSET;
+            line.X2 = pLine.EndPoint.XPosition + TLine.POSITION_OFFSET;
+            line.Y1 = pLine.StartPoint.YPosition + TLine.POSITION_OFFSET;
+            line.Y2 = pLine.EndPoint.YPosition + TLine.POSITION_OFFSET;
+            line.StrokeThickness = pLine.Thickness;
 
             mainDesigner.AddShape(line);
         }
@@ -124,14 +139,14 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             {
                 PathGeometry pathGeometry = new PathGeometry();
                 PathFigure figure = new PathFigure();
-                figure.StartPoint = new Point(arc.startPoint.XPosition + TArc.POSITION_OFFSET, arc.startPoint.YPosition + TArc.POSITION_OFFSET);
-                SweepDirection direction = !(arc.inverted) ? SweepDirection.Clockwise : SweepDirection.Counterclockwise;
-                figure.Segments.Add(new ArcSegment(new Point(arc.endPoint.XPosition + TArc.POSITION_OFFSET, arc.endPoint.YPosition + TArc.POSITION_OFFSET), new Size(100, 100), 0, false, direction, true));
+                figure.StartPoint = new Point(arc._StartPoint.XPosition + TArc.POSITION_OFFSET, arc._StartPoint.YPosition + TArc.POSITION_OFFSET);
+                SweepDirection direction = !(arc._Inverted) ? SweepDirection.Clockwise : SweepDirection.Counterclockwise;
+                figure.Segments.Add(new ArcSegment(new Point(arc._EndPoint.XPosition + TArc.POSITION_OFFSET, arc._EndPoint.YPosition + TArc.POSITION_OFFSET), new Size(100, 100), 0, false, direction, true));
                 pathGeometry.Figures.Add(figure);
                 Path path = new Path();
                 path.Data = pathGeometry;
-                path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc.color));
-                path.StrokeThickness = arc.thickness;
+                path.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(arc._Color));
+                path.StrokeThickness = arc._Thickness;
                 mainDesigner.AddShape(path);
             }
         }
@@ -155,14 +170,14 @@ namespace Tennis.ApplicationGUI.VisualizationModes
         private void drawCustomLine(double pStartX, double pStartY, double pEndX, double pEndY)
         {
             TPoint startPoint = new TPoint('l', mainDesigner.ActualWidth, mainDesigner.ActualHeight, TPoint.DefaultPosition.DefaultGeneric_XPosition, TPoint.DefaultPosition.DefaultGeneric_YPosition);
-            startPoint.setCustomPointData(mainDesigner.ActualWidth, mainDesigner.ActualHeight, pStartX, pStartY);
+            startPoint.setPointAsCustom(mainDesigner.ActualWidth, mainDesigner.ActualHeight, pStartX, pStartY);
 
             TPoint endPoint = new TPoint('l', mainDesigner.ActualWidth, mainDesigner.ActualHeight, TPoint.DefaultPosition.DefaultGeneric_XPosition, TPoint.DefaultPosition.DefaultGeneric_YPosition);
-            endPoint.setCustomPointData(mainDesigner.ActualWidth, mainDesigner.ActualHeight, pEndX, pEndY);
+            endPoint.setPointAsCustom(mainDesigner.ActualWidth, mainDesigner.ActualHeight, pEndX, pEndY);
 
             TLine newTLine = new TLine(startPoint, endPoint);
-            newTLine.color = newLinesColor;
-            newTLine.thickness = newLinesThickness;
+            newTLine.Color = newLinesColor;
+            newTLine.Thickness = newLinesThickness;
             currentDesign.CustomLines.Add(newTLine);
             newLine = null;
         }
@@ -170,31 +185,31 @@ namespace Tennis.ApplicationGUI.VisualizationModes
         private void drawEllipse(TEllipse pEllipse) 
         {
             Ellipse newEllipse = new Ellipse();
-            newEllipse.Height = pEllipse.radius*2;
-            newEllipse.Width = pEllipse.radius*2;
-            newEllipse.StrokeThickness = pEllipse.thickness;
-            newEllipse.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.fillColor));
-            newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.borderColor));
-            Canvas.SetLeft(newEllipse, pEllipse.radiusPoint.XPosition - pEllipse.radius);
-            Canvas.SetTop(newEllipse, pEllipse.radiusPoint.YPosition - pEllipse.radius);
+            newEllipse.Height = pEllipse.Radius*2;
+            newEllipse.Width = pEllipse.Radius * 2;
+            newEllipse.StrokeThickness = pEllipse.Thickness;
+            newEllipse.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.FillColor));
+            newEllipse.Stroke = (SolidColorBrush)(new BrushConverter().ConvertFrom(pEllipse.BorderColor));
+            Canvas.SetLeft(newEllipse, pEllipse.RadiusPoint.XPosition - pEllipse.Radius);
+            Canvas.SetTop(newEllipse, pEllipse.RadiusPoint.YPosition - pEllipse.Radius);
             mainDesigner.AddShape(newEllipse);
 
         }
 
-        private void createFillPoint(Point p)
+        private void createFillPoint(Point pPoint)
         {
-            TPoint fillPoint = new TPoint('f', mainDesigner.ActualWidth, mainDesigner.ActualHeight, TPoint.DefaultPosition.DefaultGeneric_XPosition, TPoint.DefaultPosition.DefaultGeneric_YPosition);
-            fillPoint.setCustomPointData(mainDesigner.ActualWidth, mainDesigner.ActualHeight, p.X, p.Y);
-            fillPoint.fillColor = paintColor;
-            Color oldColor = GetPixelColor(BitmapConverter.CreateWriteableBitmapFromCanvas(mainDesigner.root), (int)p.X, (int)p.Y);
-            fillPoint.oldColor = "#" + oldColor.R.ToString("X2") + oldColor.G.ToString("X2") + oldColor.B.ToString("X2");
-            currentDesign.FillIndicators.Add(fillPoint);
-            drawPoint(fillPoint);
+            TFillIndicator fillIndicator = new TFillIndicator('f', mainDesigner.ActualWidth, mainDesigner.ActualHeight, TPoint.DefaultPosition.DefaultGeneric_XPosition, TPoint.DefaultPosition.DefaultGeneric_YPosition);
+            fillIndicator.setPointAsCustom(mainDesigner.ActualWidth, mainDesigner.ActualHeight, pPoint.X, pPoint.Y);
+            fillIndicator.NewFillColor = paintColor;
+            Color oldColor = GetPixelColor(BitmapConverter.CreateWriteableBitmapFromCanvas(mainDesigner.root), (int)pPoint.X, (int)pPoint.Y);
+            fillIndicator.OldFillColor = "#" + oldColor.R.ToString("X2") + oldColor.G.ToString("X2") + oldColor.B.ToString("X2");
+            currentDesign.FillIndicators.Add(fillIndicator);
+            drawFillIndicator(fillIndicator);
         }
 
-        private void drawFillPoints(List<TPoint> pPoints)
+        private void drawFillIndicators(List<TFillIndicator> pPoints)
         {
-            foreach (TPoint p in pPoints)
+            foreach (TFillIndicator p in pPoints)
             {
                 drawPoint(p);
             }
@@ -242,8 +257,8 @@ namespace Tennis.ApplicationGUI.VisualizationModes
                 if (p.X >= 0 && p.X <= mainDesigner.root.ActualWidth
                     && p.Y >= 0 && p.Y <= mainDesigner.root.ActualHeight)
                 {
-                    currentDesign.getPointWithID(selectedPoint.Uid[0]).setXPositionRelative(p.X, mainDesigner.ActualWidth);
-                    currentDesign.getPointWithID(selectedPoint.Uid[0]).setYPositionRelative(p.Y, mainDesigner.ActualHeight);
+                    currentDesign.getPointWithID(selectedPoint.Uid[0]).setRelativeXPosition(p.X, mainDesigner.ActualWidth);
+                    currentDesign.getPointWithID(selectedPoint.Uid[0]).setRelativeYPosition(p.Y, mainDesigner.ActualHeight);
                 }
                 selectedPoint.ReleaseMouseCapture();
                 Canvas.SetZIndex(selectedPoint, 0);
@@ -317,13 +332,13 @@ namespace Tennis.ApplicationGUI.VisualizationModes
             if (isDrawingEllipse)
             {
                 TPoint ellipseCenter = new TPoint('r', mainDesigner.ActualWidth, mainDesigner.ActualHeight, TPoint.DefaultPosition.DefaultGeneric_XPosition, TPoint.DefaultPosition.DefaultGeneric_YPosition);
-                ellipseCenter.setCustomPointData(mainDesigner.ActualWidth, mainDesigner.ActualHeight, e.GetPosition(mainDesigner).X, e.GetPosition(mainDesigner).Y);
+                ellipseCenter.setPointAsCustom(mainDesigner.ActualWidth, mainDesigner.ActualHeight, e.GetPosition(mainDesigner).X, e.GetPosition(mainDesigner).Y);
 
                 TEllipse newEllipse = new TEllipse(ellipseCenter);
-                newEllipse.radius = ellipseRadius;
-                newEllipse.thickness = ellipseThickness;
-                newEllipse.fillColor = ellipseFillColor;
-                newEllipse.borderColor = ellipseBorderColor;
+                newEllipse.Radius = ellipseRadius;
+                newEllipse.Thickness = ellipseThickness;
+                newEllipse.FillColor = ellipseFillColor;
+                newEllipse.BorderColor = ellipseBorderColor;
                 currentDesign.CustomEllipses.Add(newEllipse);
 
                 drawEllipse(newEllipse);

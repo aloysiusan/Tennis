@@ -12,34 +12,35 @@ namespace Tennis.ApplicationGUI.VisualizationModes
 {
     public abstract class VisualizationMode
     {
-        private static VisualizationMode instance;
         public enum Mode
         {
             FIRE, ARCADE, EDIT
         }
 
-        public static VisualizationMode createInstance(ApplicationController mainController, Designer pDesigner, Mode pSelectedMode){
+        public static VisualizationMode createInstance(ApplicationController pMainController, Designer pDesigner, Mode pSelectedMode){
             if (pSelectedMode == Mode.FIRE)
             {
-                mainController.getCurrentDesign().adjustPoints(pDesigner.ActualWidth,pDesigner.ActualHeight);
-                instance = FireMode.createInstance(mainController.getCurrentDesign(), pDesigner);
-                FireMode.Instance().finishDrawingDesign_EventHandler += mainController.OnDesignFinishedDrawing;
+                pMainController.getCurrentDesign().adjustPointsForRelativePosition(pDesigner.ActualWidth,pDesigner.ActualHeight);
+                instance = FireMode.createInstance(pMainController.getCurrentDesign(), pDesigner);
+                FireMode.Instance().finishDrawingDesign_EventHandler += pMainController.OnDesignFinishedDrawing;
             }
             else if (pSelectedMode == Mode.ARCADE)
             {
-                mainController.getCurrentDesign().adjustPoints(pDesigner.ActualWidth, pDesigner.ActualHeight);
-                instance = ArcadeMode.createNewInstance(mainController.getCurrentDesign(), pDesigner);
-                ArcadeMode.getInstance().finishDrawingDesign_EventHandler += mainController.OnDesignFinishedDrawing;
+                pMainController.getCurrentDesign().adjustPointsForRelativePosition(pDesigner.ActualWidth, pDesigner.ActualHeight);
+                instance = ArcadeMode.createNewInstance(pMainController.getCurrentDesign(), pDesigner);
+                ArcadeMode.getInstance().finishDrawingDesign_EventHandler += pMainController.OnDesignFinishedDrawing;
             }
             else
             {
-                mainController.getCurrentDesign().adjustPoints(pDesigner.ActualWidth, pDesigner.ActualHeight);
-                instance = EditMode.createInstance(mainController.getTmpDesign(), pDesigner);
+                pMainController.getCurrentDesign().adjustPointsForRelativePosition(pDesigner.ActualWidth, pDesigner.ActualHeight);
+                instance = EditMode.createInstance(pMainController.getTmpDesign(), pDesigner);
             }
 
             return instance;
         }
 
         public abstract void initDrawing();
+
+        private static VisualizationMode instance;
     }
 }
