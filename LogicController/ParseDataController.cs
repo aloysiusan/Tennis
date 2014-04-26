@@ -39,7 +39,7 @@ namespace Tennis.ApplicationLogic
             EventHandler<TennisEventArgs> handler = designsFinishedDownloading_EventHandler;
             if (handler != null)
             {
-                args.ParseObjectData = JsonConvert.DeserializeObject<DesignObject[]>(args.ParseJSONData);
+                if (args.FinishedSuccessfully) args.ParseObjectData = JsonConvert.DeserializeObject<DesignObject[]>(args.ParseJSONData);
                 handler(this, args);
             }
         }

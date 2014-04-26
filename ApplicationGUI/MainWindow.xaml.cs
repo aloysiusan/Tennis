@@ -37,6 +37,7 @@ namespace Tennis.ApplicationGUI
             ApplicationController.Instance().designDurationUpdated_EventHandler += new EventHandler<TennisEventArgs>(this.onDesignFinishedLoading);
         }
 
+        #region "GUI Listeners"
         private void onMainWindowLoad(object sender, RoutedEventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Visible));
@@ -239,8 +240,12 @@ namespace Tennis.ApplicationGUI
 
         private void onFillColorPickerSelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
         {
-            EditMode.Instance().paintColor = "#" + e.NewValue.R.ToString("X2") + e.NewValue.G.ToString("X2") + e.NewValue.B.ToString("X2");                 
+            EditMode.Instance().paintColor = "#" + e.NewValue.R.ToString("X2") + e.NewValue.G.ToString("X2") + e.NewValue.B.ToString("X2");
         }
+
+        #endregion
+
+        #region "Application Event Listeners"
 
         private void onDesignCreationFailed(object sender, TennisEventArgs args)
         {
@@ -282,23 +287,31 @@ namespace Tennis.ApplicationGUI
 
         private void onSelectedDesignDataRecieved(object sender, TennisEventArgs args)
         {
-            if (args.FinishedSuccessfully && args.IsNewDesign)
+            if (args.FinishedSuccessfully)
             {
-                Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton((string)args.DesignData[0], (string)args.DesignData[1],
-                    (string)args.DesignData[2], true, onDesignItemSelected))));
-                Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
-                Dispatcher.BeginInvoke(new Action(() => currentDesignReportsView.Visibility = Visibility.Hidden));
-                Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
-                Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
-                Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
-                Dispatcher.BeginInvoke(new Action(() => btnReports.IsEnabled = true));
+                if (args.IsNewDesign)
+                {
+                    Dispatcher.BeginInvoke(new Action(() => desingsList.Children.Add(new DesignButton((string)args.DesignData[0], (string)args.DesignData[1],
+                        (string)args.DesignData[2], true, onDesignItemSelected))));
+                    Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
+                    Dispatcher.BeginInvoke(new Action(() => currentDesignReportsView.Visibility = Visibility.Hidden));
+                    Dispatcher.BeginInvoke(new Action(() => btnNewDesign.IsEnabled = true));
+                    Dispatcher.BeginInvoke(new Action(() => waitingProgress.Visibility = Visibility.Hidden));
+                    Dispatcher.BeginInvoke(new Action(() => waitingProgress.IsIndeterminate = false));
+                    Dispatcher.BeginInvoke(new Action(() => btnReports.IsEnabled = true));
+                }
+                else
+                {
+                    this.drawDesignUsingMode(VisualizationMode.createInstance(ApplicationController.Instance(), this.designerView, selectedMode));
+
+                    Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
+                    Dispatcher.BeginInvoke(new Action(() => btnEditDesign.IsEnabled = true));
+                }
             }
+
             else
             {
-                this.drawDesignUsingMode(VisualizationMode.createInstance(ApplicationController.Instance(), this.designerView, selectedMode));
-
-                Dispatcher.BeginInvoke(new Action(() => lblDesignName.Content = (string)args.DesignData[1]));
-                Dispatcher.BeginInvoke(new Action(() => btnEditDesign.IsEnabled = true));
+                MessageBox.Show("Ha ocurrido un error al intentar cargar el diseño. Por favor verifique su conexión y vuelva a intentarlo.", "Error al Conectar", MessageBoxButton.OK, MessageBoxImage.Error);           
             }
         }
 
@@ -369,6 +382,8 @@ namespace Tennis.ApplicationGUI
             this.drawDesignUsingMode(VisualizationMode.createInstance(ApplicationController.Instance(), this.designerView, selectedMode));
 
         }
+
+        #endregion
 
         private VisualizationMode.Mode selectedMode;  
 

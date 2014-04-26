@@ -77,13 +77,16 @@ namespace Tennis.ApplicationLogic
             EventHandler<TennisEventArgs> handler = designsReady_EventHandler;
             if (handler != null)
             {
-                DesignObject[] designsList = (DesignObject[])args.ParseObjectData;
-                List<Object> formatedList = new List<object>();
-                for (int i = 0; i < designsList.Length;i++)
+                if (args.FinishedSuccessfully)
                 {
-                    formatedList.Add(new string[] { designsList[i].ID, designsList[i].Name, designsList[i].UpdatedAt});
+                    DesignObject[] designsList = (DesignObject[])args.ParseObjectData;
+                    List<Object> formatedList = new List<object>();
+                    for (int i = 0; i < designsList.Length; i++)
+                    {
+                        formatedList.Add(new string[] { designsList[i].ID, designsList[i].Name, designsList[i].UpdatedAt });
+                    }
+                    args.DesignsList = formatedList;
                 }
-                args.DesignsList = formatedList;
                 handler(this, args);
             }
         }
